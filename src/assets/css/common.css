@@ -1,0 +1,22 @@
+.btn {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    height: 2.5rem;
+}
+
+.input {
+    padding: 0 0.75rem;
+    background: white;
+    border: 1px solid #00000026;
+    border-radius: 0.375rem;
+    height: 2rem;
+    outline: none;
+}
+
+input:focus {
+    border-color: blue;
+}
+
+.input::placeholder {
+    color: #00000026;
+}
