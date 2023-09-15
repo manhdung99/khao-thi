@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "Ngân hàng câu hỏi" },
   },
   {
-    path: "/bank/:bankID",
+    path: "/bank-detail/",
     name: "bankDetail",
     component: QuestionBankVue,
     meta: { title: "Ngân hàng câu hỏi" },

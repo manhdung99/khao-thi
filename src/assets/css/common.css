@@ -14,9 +14,25 @@
 }
 
 input:focus {
-    border-color: blue;
+    border-color: rgb(100, 100, 233);
 }
 
 .input::placeholder {
     color: #00000026;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #8c8c8c33;
+    display: flex;
+}
+
+.modal.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

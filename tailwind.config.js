@@ -31,11 +31,16 @@ export default {
           darker: "#0958d9",
         },
         grey: {
+          lighter: "#f5f5f5",
           DEFAULT: "#00000073",
         },
         modal: {
           DEFAULT: "#8c8c8c33",
           darker: "#00000080",
+        },
+        black: {
+          lighter: "#000000e0",
+          DEFAULT: "#000",
         },
       },
       spacing: {

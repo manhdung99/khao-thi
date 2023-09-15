@@ -20,35 +20,62 @@
       </div>
     </div>
     <div class="page-body p-6 relative">
-      <div>
-        <div class="text-sm font-bold">
-          <span class="text-red-500">*</span> Tên ngân hàng câu hỏi
+      <div class="flex justify-between">
+        <!-- Question  -->
+        <div class="flex-1 mr-9">
+          <div>
+            <div class="text-sm font-bold">
+              <span class="text-red-500">*</span> Tên ngân hàng câu hỏi
+            </div>
+            <input class="input" type="text" />
+          </div>
+          <!-- Chưa có câu hỏi  -->
+          <!-- <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div> -->
+          <!-- Có câu hỏi  -->
+          <div class="list-question mt-4">
+            <questionVue />
+          </div>
         </div>
-        <input class="input" type="text" />
-      </div>
-      <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div>
-      <!-- Button  -->
-      <div class="absolute right-6 flex flex-col top-4">
-        <button class="btn bg-indigo text-white mt-2">Thêm câu hỏi</button>
-        <button
-          class="btn bg-white text-red-500 border border-grey-lighter mt-4"
-        >
-          Xoá ngân hàng
-        </button>
-        <span class="text-blue underline mt-4">Xem thống kê</span>
+        <!-- Action   -->
+        <div class="flex flex-col top-4">
+          <button
+            @click="updateAddNewBankModalStatus(true)"
+            class="btn bg-indigo text-white mt-2"
+          >
+            Thêm câu hỏi
+          </button>
+          <button
+            class="btn bg-white text-red-500 border border-grey-lighter mt-4"
+          >
+            Xoá ngân hàng
+          </button>
+          <span class="text-blue underline mt-4">Xem thống kê</span>
+        </div>
       </div>
     </div>
   </div>
+  <Teleport to="body">
+    <AddNewPopup v-if="openAddNewBankModal" />
+  </Teleport>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
+import questionVue from "../components/question/question.vue";
+import AddNewPopup from "../components/popup/addNewPopup.vue";
+import { usePopupStore } from "../stores/popup";
 export default defineComponent({
   name: "QuestionBankVue",
+  components: {
+    AddNewPopup,
+    questionVue,
+  },
   setup() {
-    return { leftIcon };
+    const { openAddNewBankModal } = storeToRefs(usePopupStore());
+    const { updateAddNewBankModalStatus } = usePopupStore();
+    return { leftIcon, openAddNewBankModal, updateAddNewBankModalStatus };
   },
 });
 </script>

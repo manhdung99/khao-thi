@@ -6,10 +6,12 @@
       <div class="flex justify-between items-center">
         <div class="font-semibold text-xl">Ngân hàng câu hỏi</div>
         <div>
-          <button class="btn bg-blue text-white font-light flex items-center">
-            <span class="mr-2"><img :src="plusIcon" alt="" /></span>
-            Tạo mới
-          </button>
+          <router-link :to="`/bank-detail/`">
+            <button class="btn bg-blue text-white font-light flex items-center">
+              <span class="mr-2"><img :src="plusIcon" alt="" /></span>
+              Tạo mới
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -77,7 +79,7 @@
               </div>
             </template>
             <template v-if="column.key === 'Name'">
-              <router-link :to="`/bank/${record.ID}`">
+              <router-link :to="`/bank-detail/`">
                 <div class="flex text-blue">
                   {{ record.Name }}
                 </div>
