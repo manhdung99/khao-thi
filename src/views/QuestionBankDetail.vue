@@ -33,7 +33,12 @@
           <!-- <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div> -->
           <!-- Có câu hỏi  -->
           <div class="list-question mt-4">
-            <questionVue />
+            <questionVue
+              v-for="(question, index) in currentBankQuestions"
+              :key="question.ID"
+              :question="question"
+              :index="index"
+            />
           </div>
         </div>
         <!-- Action   -->
@@ -44,9 +49,7 @@
           >
             Thêm câu hỏi
           </button>
-          <button
-            class="btn bg-white text-red-500 border border-grey-lighter mt-4"
-          >
+          <button class="btn bg-white text-red-500 border border-gray-300 mt-4">
             Xoá ngân hàng
           </button>
           <span class="text-blue underline mt-4">Xem thống kê</span>
@@ -57,25 +60,51 @@
   <Teleport to="body">
     <AddNewPopup v-if="openAddNewBankModal" />
   </Teleport>
+  <Teleport to="body">
+    <deletePopup v-if="openDeleteQuestionModal" />
+  </Teleport>
+  <Teleport to="body">
+    <addNewQuestionHandmade v-if="openAddNewQuestionHandmadeModal" />
+  </Teleport>
 </template>
 
 <script lang="ts">
+import questionVue from "../components/question/question.vue";
+import AddNewPopup from "../components/popup/addNewPopup.vue";
+import deletePopup from "../components/popup/deleteQuestionPopup.vue";
+import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
-import questionVue from "../components/question/question.vue";
-import AddNewPopup from "../components/popup/addNewPopup.vue";
+import { useQuestionBankStore } from "../stores/question-bank-store";
 import { usePopupStore } from "../stores/popup";
 export default defineComponent({
   name: "QuestionBankVue",
   components: {
     AddNewPopup,
     questionVue,
+    deletePopup,
+    addNewQuestionHandmade,
   },
   setup() {
-    const { openAddNewBankModal } = storeToRefs(usePopupStore());
+    const {
+      openAddNewBankModal,
+      openDeleteQuestionModal,
+      openAddNewQuestionHandmadeModal,
+    } = storeToRefs(usePopupStore());
     const { updateAddNewBankModalStatus } = usePopupStore();
-    return { leftIcon, openAddNewBankModal, updateAddNewBankModalStatus };
+    const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
+    const { currentBankQuestions } = storeToRefs(useQuestionBankStore());
+    onMounted(getCurrentBankQuestions);
+    return {
+      openAddNewQuestionHandmadeModal,
+      openAddNewBankModal,
+      openDeleteQuestionModal,
+      leftIcon,
+      currentBankQuestions,
+      updateAddNewBankModalStatus,
+      deleteQuestion,
+    };
   },
 });
 </script>

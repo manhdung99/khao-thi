@@ -20,7 +20,13 @@
           <div class="font-semibold">Tạo từ file Word</div>
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
         </div>
-        <div class="card">
+        <div
+          @click="
+            updateAddNewQuestionHandmadeModalStatus(true);
+            updateAddNewBankModalStatus(false);
+          "
+          class="card"
+        >
           <div class="font-semibold">Tạo thủ công</div>
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
         </div>
@@ -35,10 +41,14 @@ import { usePopupStore } from "../../stores/popup";
 export default defineComponent({
   name: "AddNewPopup",
   setup() {
-    const { updateAddNewBankModalStatus } = usePopupStore();
+    const {
+      updateAddNewBankModalStatus,
+      updateAddNewQuestionHandmadeModalStatus,
+    } = usePopupStore();
     return {
       closeIcon,
       updateAddNewBankModalStatus,
+      updateAddNewQuestionHandmadeModalStatus,
     };
   },
 });
