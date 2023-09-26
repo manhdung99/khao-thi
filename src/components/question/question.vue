@@ -1,6 +1,6 @@
 <template>
   <!-- Default  -->
-  <div class="bg-white rounded-md question-detail mb-4">
+  <div v-if="question" class="bg-white rounded-md question-detail mb-4">
     <div
       class="p-3 flex items-center justify-between border-b border-grey-lighter"
     >
@@ -8,7 +8,17 @@
         >{{ index + 1 }}. Câu hỏi số {{ index + 1 }}</span
       >
       <span class="text-sm text-black-lighter"
-        >Bài tập | Thông hiểu | Điền từ</span
+        >{{ question.QuestionType == 0 ? "Lý thuyết" : "Bài tập" }} |
+        {{ question.QuestionType == 0 ? "Thông hiểu" : "Vận dụng" }} |
+        {{
+          question.Type == "QUIZ1"
+            ? "Chọn một"
+            : question.Type == "QUIZ2"
+            ? "Điền từ"
+            : question.Type == "QUIZ3"
+            ? "Matching"
+            : "Chọn nhiều"
+        }}</span
       >
     </div>
     <!-- Default  -->
@@ -16,7 +26,7 @@
       v-if="!showDetail"
       class="p-4 text-sm text-gray-600 flex justify-between"
     >
-      <span v-html="question && question.Title"></span>
+      <span v-html="question.Title"></span>
       <div class="flex">
         <span @click="showDetail = true" class="mr-2 cursor-pointer">
           <img :src="eyeIcon" alt="" />
@@ -26,7 +36,7 @@
         </span>
         <span
           @click="
-            questionDeleteID = question && question.ID;
+            questionDeleteID = question.ID;
             questionDeleteIndex = index as number;
             updateDeleteQuestionModalStatus(true);
           "
@@ -48,40 +58,42 @@
           :src="iconTop"
           alt=""
       /></span>
-      <div v-if="!isEdit" v-html="question && question.Description"></div>
-      <textarea
+      <div v-if="!isEdit" v-html="question.Description"></div>
+      <QuillEditor
         v-else
-        class="input w-full h-40"
-        :value="question && question.Description"
-      ></textarea>
+        contentType="html"
+        toolbar="full"
+        theme="snow"
+        class="border rounded"
+        v-model:content="question.Description"
+      ></QuillEditor>
       <div
-        v-for="questionDetail in question && question.Questions"
+        v-for="questionDetail in question.Questions"
         :key="questionDetail.ID"
       >
         <div class="my-2" v-if="!isEdit" v-html="questionDetail.Content"></div>
-        <div class="flex flex-col">
+        <div>
           <span
             v-for="(answer, index) in questionDetail.Answers"
             :key="answer.ID"
-            class="flex items-center mb-2.5"
+            class="mb-2.5"
+            :class="!isEdit ? 'flex' : ''"
           >
             <span>{{ index + 1 }}.</span>
-            <span
-              class="flex items-center"
-              v-if="!isEdit"
-              v-html="answer.Content"
-            ></span>
-            <input
-              class="input h-6 w-full"
+            <span class="" v-if="!isEdit" v-html="answer.Content"></span>
+            <QuillEditor
               v-else
-              type="text"
-              :value="answer.Content"
-            />
+              contentType="html"
+              toolbar="minimal"
+              theme="snow"
+              class="border rounded h-6"
+              v-model:content="answer.Content"
+            ></QuillEditor>
           </span>
         </div>
       </div>
       <!-- Bottom  -->
-      <div class="flex justify-end">
+      <div class="flex justify-end mt-2">
         <div v-if="!isEdit" class="flex">
           <span @click="isEdit = true" class="mr-2 cursor-pointer">
             <img :src="editIcon" alt="" />
@@ -91,7 +103,7 @@
           </span>
           <span
             @click="
-              questionDeleteID = question && question.ID;
+              questionDeleteID = question.ID;
               questionDeleteIndex = index as number;
               updateDeleteQuestionModalStatus(true);
             "
@@ -102,46 +114,78 @@
         </div>
         <div v-else>
           <button
-            @click="isEdit = false"
+            @click="
+              resetData();
+              isEdit = false;
+            "
             class="btn bg-white text-red-500 border border-gray-300 mr-3 w-15"
           >
             Huỷ
           </button>
-          <button class="btn bg-indigo text-white w-15">Lưu</button>
+          <button
+            @click="
+              updateQuestionInQuestionList(question);
+              isEdit = false;
+            "
+            class="btn bg-indigo text-white w-15"
+          >
+            Lưu
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { usePopupStore } from "../../stores/popup";
 import { useQuestionBankStore } from "../../stores/question-bank-store";
 import editIcon from "../../assets/image/edit.svg";
 import eyeIcon from "../../assets/image/eye.svg";
 import duplicateIcon from "../../assets/image/duplicateIcon.svg";
 import removeIcon from "../../assets/image/removeIcon.svg";
-import Question from "../type/question";
 import iconTop from "../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
+import PartQuestion from "../type/partQuestion";
 export default defineComponent({
   name: "QuestionVue",
   props: {
-    question: Object,
-    index: Number,
+    index: {
+      type: Number,
+      required: true,
+    },
+    questionPart: {
+      type: Object,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
     const { updateAddNewBankModalStatus, updateDeleteQuestionModalStatus } =
       usePopupStore();
     const { deleteQuestion } = useQuestionBankStore();
+
+    // Remove the initialization of question with props.questionPart
+    const question = ref<PartQuestion>();
+
     const { questionDeleteID, questionDeleteIndex } = storeToRefs(
       useQuestionBankStore()
     );
+    const { updateQuestionInQuestionList } = useQuestionBankStore();
+
+    const resetData = () => {
+      // Reset the question ref to a deep copy of props.questionPart
+      question.value = JSON.parse(JSON.stringify(props.questionPart));
+    };
+
+    onMounted(() => {
+      // Set the question ref to a deep copy of props.questionPart
+      question.value = JSON.parse(JSON.stringify(props.questionPart));
+    });
+
     const showDetail = ref(false);
     const isEdit = ref(false);
+
     return {
-      updateAddNewBankModalStatus,
-      updateDeleteQuestionModalStatus,
       editIcon,
       duplicateIcon,
       removeIcon,
@@ -149,9 +193,14 @@ export default defineComponent({
       eyeIcon,
       isEdit,
       iconTop,
-      deleteQuestion,
       questionDeleteIndex,
       questionDeleteID,
+      question,
+      updateAddNewBankModalStatus,
+      updateDeleteQuestionModalStatus,
+      deleteQuestion,
+      updateQuestionInQuestionList,
+      resetData,
     };
   },
 });

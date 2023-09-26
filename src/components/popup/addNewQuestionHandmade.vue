@@ -24,8 +24,8 @@
             <div class="text-indigo font-semibold mb-2">Loại câu hỏi</div>
             <div>
               <select v-model="questionType" class="input w-full" name="" id="">
-                <option value="theory">Lý thuyết</option>
-                <option value="exercise">Bài tập</option>
+                <option value="0">Lý thuyết</option>
+                <option value="1">Bài tập</option>
               </select>
             </div>
           </div>
@@ -33,8 +33,8 @@
             <div class="text-indigo font-semibold mb-2">Mức độ</div>
             <div>
               <select v-model="level" class="input w-full" name="" id="">
-                <option value="basic">Nhận biết</option>
-                <option value="advanced">Vận dụng</option>
+                <option value="1">Nhận biết</option>
+                <option value="2">Vận dụng</option>
               </select>
             </div>
           </div>
@@ -56,16 +56,12 @@
         <div>
           <QuillEditor
             contentType="html"
-            toolbar="full"
             v-model:content="editerData"
-            :options="editorOptions"
+            toolbar="full"
             ref="editor"
             theme="snow"
           />
-          <div
-            v-if="questionType == 'exercise' && questionArray.length > 0"
-            class="mt-4"
-          >
+          <div v-if="questionArray.length > 0" class="mt-4">
             <MultipleChoice
               v-for="(question, index) in questionArray"
               :key="question.ID"
@@ -77,7 +73,7 @@
             />
           </div>
         </div>
-        <div v-if="questionType == 'exercise'" class="flex my-4">
+        <div class="flex my-4">
           <button @click="addNewQuestion" class="mr-2 btn btn-blue">
             Thêm câu hỏi
           </button>
@@ -120,9 +116,9 @@ export default defineComponent({
     const editerData = ref("");
     const editor = ref();
     const type = ref("QUIZ1");
-    const level = ref("basic");
+    const level = ref("1");
     const title = ref("");
-    const questionType = ref("theory");
+    const questionType = ref("0");
     const questionArray = ref<Question[]>([]);
     const addNewQuestion = () => {
       const id = "id" + Math.random().toString(16).slice(2);
@@ -144,17 +140,11 @@ export default defineComponent({
       );
     };
     const editorOptions = {
+      // Quill options here
       modules: {
-        custom: [
-          {
-            icon: "button_fillquiz_icon", // Replace with your custom icon class
-            name: "fillquiz",
-            action: () => {
-              // Your custom action when the button is clicked
-              editor.value.focus();
-              editor.value.format("fillquiz", true);
-            },
-          },
+        toolbar: [
+          // Include other toolbar options here
+          [{ image: "true" }],
         ],
       },
     };
@@ -166,6 +156,8 @@ export default defineComponent({
         Media: null,
         Title: title.value,
         Questions: questionArray.value,
+        Level: Number.parseInt(level.value),
+        QuestionType: Number.parseInt(questionType.value),
       };
       addQuestionToCurrentList(data);
       updateAddNewQuestionHandmadeModalStatus(false);

@@ -5,5 +5,7 @@ export default interface PartQuestion {
   Media: Media | null;
   Title: string;
   Type: string;
+  QuestionType: number;
+  Level: number;
   Questions: Array<any> | null;
 }

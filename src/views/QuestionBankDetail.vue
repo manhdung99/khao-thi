@@ -36,7 +36,7 @@
             <questionVue
               v-for="(question, index) in currentBankQuestions"
               :key="question.ID"
-              :question="question"
+              :questionPart="question"
               :index="index"
             />
           </div>
@@ -66,6 +66,9 @@
   <Teleport to="body">
     <addNewQuestionHandmade v-if="openAddNewQuestionHandmadeModal" />
   </Teleport>
+  <Teleport to="body">
+    <SelectQuestionFromCourse v-if="openSelectQuestionFromCourse" />
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -73,6 +76,7 @@ import questionVue from "../components/question/question.vue";
 import AddNewPopup from "../components/popup/addNewPopup.vue";
 import deletePopup from "../components/popup/deleteQuestionPopup.vue";
 import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
+import SelectQuestionFromCourse from "./SelectQuestionFromCourse.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
@@ -85,12 +89,14 @@ export default defineComponent({
     questionVue,
     deletePopup,
     addNewQuestionHandmade,
+    SelectQuestionFromCourse,
   },
   setup() {
     const {
       openAddNewBankModal,
       openDeleteQuestionModal,
       openAddNewQuestionHandmadeModal,
+      openSelectQuestionFromCourse,
     } = storeToRefs(usePopupStore());
     const { updateAddNewBankModalStatus } = usePopupStore();
     const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
@@ -98,6 +104,7 @@ export default defineComponent({
     onMounted(getCurrentBankQuestions);
     return {
       openAddNewQuestionHandmadeModal,
+      openSelectQuestionFromCourse,
       openAddNewBankModal,
       openDeleteQuestionModal,
       leftIcon,
@@ -113,5 +120,8 @@ export default defineComponent({
   color: #00000073;
   font-size: 14px;
   font-style: italic;
+}
+.question-detail .ql-container.ql-snow {
+  min-height: 50px;
 }
 </style>

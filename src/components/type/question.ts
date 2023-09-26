@@ -1,6 +1,6 @@
 import Answer from "./answer";
 import Media from "./media";
-export default interface PartQuestion {
+export default interface Question {
   ID: string;
   Content: string;
   Media: Media | null;

@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import convertData from "../uses/convertData";
 import PartQuestion from "@/components/type/partQuestion";
-import axios from "axios";
 export const useQuestionBankStore = defineStore("questionBankStore", {
   state: () => ({
     questionBanks: [] as Array<any>,
@@ -127,6 +126,8 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
           OriginID: null,
           ParentID: "62c7eb2f5be48621708efcf3",
           Point: 0,
+          Level: 0,
+          QuestionType: 0,
           Questions: [
             {
               Answers: [
@@ -148,7 +149,7 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
           Timer: 0,
           Title:
             "3. Complete the questions using the words in parentheses. Then match each question with an answer.",
-          Type: "QUIZ1",
+          Type: "QUIZ2",
         },
         {
           Created: "2022-07-08T08:30:39.596Z",
@@ -162,6 +163,8 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
           OriginID: null,
           ParentID: "62c7eb2f5be48621708efcf3",
           Point: 0,
+          Level: 0,
+          QuestionType: 0,
           Questions: [
             {
               Answers: [
@@ -189,14 +192,22 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
       this.currentBankQuestions = data;
     },
     addQuestionToCurrentList(data: PartQuestion) {
-      console.log(data);
-
       this.currentBankQuestions = [data, ...this.currentBankQuestions];
     },
     deleteQuestion(id: string) {
       this.currentBankQuestions = this.currentBankQuestions.filter(
         (question) => question.ID != id
       );
+    },
+    updateQuestionInQuestionList(data: PartQuestion) {
+      console.log(data);
+
+      const index = this.currentBankQuestions.findIndex(
+        (question) => question.ID == data.ID
+      );
+      if (index >= 0) {
+        this.currentBankQuestions[index] = data;
+      }
     },
   },
 });

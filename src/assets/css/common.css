@@ -17,6 +17,11 @@
     border-color: rgb(134 166 192);
 }
 
+.input:disabled {
+    border-color: #00000026;
+    background-color: #0000000a;
+}
+
 .input::placeholder {
     color: #00000026;
 }
