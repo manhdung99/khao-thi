@@ -95,7 +95,11 @@
       <!-- Bottom  -->
       <div class="flex justify-end mt-2">
         <div v-if="!isEdit" class="flex">
-          <span @click="isEdit = true" class="mr-2 cursor-pointer">
+          <span
+            v-if="canEdit"
+            @click="isEdit = true"
+            class="mr-2 cursor-pointer"
+          >
             <img :src="editIcon" alt="" />
           </span>
           <span class="mr-2 cursor-pointer">
@@ -156,6 +160,10 @@ export default defineComponent({
     },
     questionPart: {
       type: Object,
+      required: true,
+    },
+    canEdit: {
+      type: Boolean,
       required: true,
     },
   },

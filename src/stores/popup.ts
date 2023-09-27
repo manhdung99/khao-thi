@@ -5,6 +5,7 @@ export const usePopupStore = defineStore("popupStore", {
     openAddNewBankModal: false,
     openDeleteQuestionModal: false,
     openAddNewQuestionHandmadeModal: false,
+    openSelectQuestionFromCourse: false,
   }),
   getters: {},
   actions: {
@@ -16,6 +17,9 @@ export const usePopupStore = defineStore("popupStore", {
     },
     updateAddNewQuestionHandmadeModalStatus(status: boolean) {
       this.openAddNewQuestionHandmadeModal = status;
+    },
+    updateSelectQuestionFromCourseStatus(status: boolean) {
+      this.openSelectQuestionFromCourse = status;
     },
   },
 });

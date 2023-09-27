@@ -8,10 +8,17 @@
         /></span>
       </div>
       <div class="flex flex-wrap marker:justify-between mt-4">
-        <div class="card">
+        <div
+          @click="
+            updateSelectQuestionFromCourseStatus(true);
+            updateAddNewBankModalStatus(false);
+          "
+          class="card"
+        >
           <div class="font-semibold">Chọn từ học liệu</div>
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
         </div>
+
         <div class="card">
           <div class="font-semibold">Chọn từ ngân hàng khác</div>
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
@@ -44,11 +51,13 @@ export default defineComponent({
     const {
       updateAddNewBankModalStatus,
       updateAddNewQuestionHandmadeModalStatus,
+      updateSelectQuestionFromCourseStatus,
     } = usePopupStore();
     return {
       closeIcon,
       updateAddNewBankModalStatus,
       updateAddNewQuestionHandmadeModalStatus,
+      updateSelectQuestionFromCourseStatus,
     };
   },
 });

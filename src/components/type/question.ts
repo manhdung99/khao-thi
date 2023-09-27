@@ -7,4 +7,6 @@ export default interface Question {
   CloneAnswers: string;
   Type: string;
   Answers: Array<Answer> | null;
+  Level: number;
+  QuestionType: number;
 }

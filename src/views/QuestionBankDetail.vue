@@ -38,6 +38,7 @@
               :key="question.ID"
               :questionPart="question"
               :index="index"
+              :canEdit="true"
             />
           </div>
         </div>
@@ -67,7 +68,7 @@
     <addNewQuestionHandmade v-if="openAddNewQuestionHandmadeModal" />
   </Teleport>
   <Teleport to="body">
-    <SelectQuestionFromCourse v-if="openSelectQuestionFromCourse" />
+    <selectQuestionFromCourse v-if="openSelectQuestionFromCourse" />
   </Teleport>
 </template>
 
@@ -76,7 +77,7 @@ import questionVue from "../components/question/question.vue";
 import AddNewPopup from "../components/popup/addNewPopup.vue";
 import deletePopup from "../components/popup/deleteQuestionPopup.vue";
 import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
-import SelectQuestionFromCourse from "./SelectQuestionFromCourse.vue";
+import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCourse.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
@@ -89,7 +90,7 @@ export default defineComponent({
     questionVue,
     deletePopup,
     addNewQuestionHandmade,
-    SelectQuestionFromCourse,
+    selectQuestionFromCourse,
   },
   setup() {
     const {

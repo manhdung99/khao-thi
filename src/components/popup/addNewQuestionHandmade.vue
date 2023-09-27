@@ -131,6 +131,8 @@ export default defineComponent({
           Answers: [],
           Type: "",
           CloneAnswers: "",
+          Level: 0,
+          QuestionType: 0,
         },
       ];
     };
