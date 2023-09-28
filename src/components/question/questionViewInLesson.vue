@@ -1,14 +1,20 @@
 <template>
   <!-- Default  -->
-  <div v-if="questionDetail" class="flex items-center ml-4">
+  <div v-if="partQuestionDetail" class="flex items-center ml-4 mt-4">
     <span
-      v-html="questionDetail.Content"
-      class="text-sm font-medium text-red-500 mr-5 max-w-1/4"
+      v-html="partQuestionDetail.Title"
+      class="text-sm font-medium text-red-500 mr-5 max-w-1/3"
     >
     </span>
-    <input class="input mr-2" type="text" placeholder="Nội dung" />
+    <input
+      v-if="!isFillDesOnetime"
+      v-model="partQuestionDetail.Description"
+      class="input mr-2 w-1/4"
+      type="text"
+      placeholder="Nội dung"
+    />
     <select
-      v-model="questionDetail.QuestionType"
+      v-model="partQuestionDetail.QuestionType"
       class="input mr-2"
       name=""
       id=""
@@ -16,7 +22,7 @@
       <option :value="0">Lý thuyết</option>
       <option :value="1">Bài tập</option>
     </select>
-    <select v-model="questionDetail.Level" class="input mr-4" name="" id="">
+    <select v-model="partQuestionDetail.Level" class="input mr-4" name="" id="">
       <option :value="0">Nhận biết</option>
       <option :value="1">Thông hiểu</option>
       <option :value="2">Vận dụng</option>
@@ -25,6 +31,7 @@
       @click="updateListSelectedQuestion"
       class="w-4 h-4 cursor-pointer"
       type="checkbox"
+      :checked="currentSelectedQuestionsID.includes(partQuestionDetail.ID)"
     />
   </div>
 </template>
@@ -38,52 +45,70 @@ import duplicateIcon from "../../assets/image/duplicateIcon.svg";
 import removeIcon from "../../assets/image/removeIcon.svg";
 import iconTop from "../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
-import Question from "../type/question";
+import PartQuestion from "../type/partQuestion";
 export default defineComponent({
   name: "QuestionViewInLesson",
   props: {
     question: {
-      type: Object as () => Question,
+      type: Object as () => PartQuestion,
       required: true,
     },
   },
   setup(props) {
-    const { updateAddNewBankModalStatus, updateDeleteQuestionModalStatus } =
-      usePopupStore();
-
+    const { updateAddNewBankModalStatus } = usePopupStore();
+    const { descriptionOneTime, isFillDesOnetime } = storeToRefs(
+      useSelectQuestionStore()
+    );
     // Remove the initialization of question with props.questionPart
-    const questionDetail = ref<Question>();
+    const partQuestionDetail = ref<PartQuestion>({
+      ID: "",
+      Description: "",
+      Media: null,
+      Title: "",
+      Type: "",
+      QuestionType: 0,
+      Level: 0,
+      Questions: [],
+    });
     const { currentSelectedQuestion } = storeToRefs(useSelectQuestionStore());
     const showDetail = ref(false);
     const isEdit = ref(false);
+    const currentSelectedQuestionsID = ref<Array<string>>([]);
     const updateListSelectedQuestion = () => {
+      if (isFillDesOnetime) {
+        partQuestionDetail.value.Description = descriptionOneTime.value;
+      }
       if (
         currentSelectedQuestion.value.length > 0 &&
-        questionDetail.value != null
+        partQuestionDetail.value != null
       ) {
-        const currentSelectedQuestionID = currentSelectedQuestion.value.map(
-          (question) => question.ID
-        );
-        if (currentSelectedQuestionID.includes(questionDetail.value.ID)) {
-          currentSelectedQuestion.value.filter(
-            (question) => question.ID != questionDetail.value.ID
+        if (
+          currentSelectedQuestionsID.value.includes(partQuestionDetail.value.ID)
+        ) {
+          currentSelectedQuestion.value = currentSelectedQuestion.value.filter(
+            (question) => question.ID != partQuestionDetail.value.ID
           );
         } else {
           currentSelectedQuestion.value = [
-            questionDetail.value,
+            partQuestionDetail.value,
             ...currentSelectedQuestion.value,
           ];
         }
       } else {
         currentSelectedQuestion.value = [
-          questionDetail.value,
+          partQuestionDetail.value,
           ...currentSelectedQuestion.value,
         ];
-        console.log(currentSelectedQuestion.valueFo);
       }
+      currentSelectedQuestionsID.value = currentSelectedQuestion.value.map(
+        (question) => question.ID
+      );
     };
     onMounted(() => {
-      questionDetail.value = props.question;
+      partQuestionDetail.value = props.question;
+      currentSelectedQuestionsID.value = currentSelectedQuestion.value.map(
+        (question) => question.ID
+      );
     });
     return {
       editIcon,
@@ -93,10 +118,12 @@ export default defineComponent({
       eyeIcon,
       isEdit,
       iconTop,
-      questionDetail,
+      partQuestionDetail,
       currentSelectedQuestion,
+      descriptionOneTime,
+      isFillDesOnetime,
+      currentSelectedQuestionsID,
       updateAddNewBankModalStatus,
-      updateDeleteQuestionModalStatus,
       updateListSelectedQuestion,
     };
   },

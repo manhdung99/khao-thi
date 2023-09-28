@@ -6,14 +6,16 @@ export const usePopupStore = defineStore("popupStore", {
     openDeleteQuestionModal: false,
     openAddNewQuestionHandmadeModal: false,
     openSelectQuestionFromCourse: false,
+    deleteKey: "",
   }),
   getters: {},
   actions: {
     updateAddNewBankModalStatus(status: boolean) {
       this.openAddNewBankModal = status;
     },
-    updateDeleteQuestionModalStatus(status: boolean) {
+    updateDeleteQuestionModalStatus(status: boolean, key = "") {
       this.openDeleteQuestionModal = status;
+      this.deleteKey = key;
     },
     updateAddNewQuestionHandmadeModalStatus(status: boolean) {
       this.openAddNewQuestionHandmadeModal = status;

@@ -195,8 +195,8 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
       ];
       this.currentBankQuestions = data;
     },
-    addQuestionToCurrentList(data: PartQuestion) {
-      this.currentBankQuestions = [data, ...this.currentBankQuestions];
+    addQuestionToCurrentList(data: Array<PartQuestion>) {
+      this.currentBankQuestions = [...data, ...this.currentBankQuestions];
     },
     deleteQuestion(id: string) {
       this.currentBankQuestions = this.currentBankQuestions.filter(

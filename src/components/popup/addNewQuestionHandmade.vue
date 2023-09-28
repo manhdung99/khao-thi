@@ -33,8 +33,9 @@
             <div class="text-indigo font-semibold mb-2">Mức độ</div>
             <div>
               <select v-model="level" class="input w-full" name="" id="">
-                <option value="1">Nhận biết</option>
-                <option value="2">Vận dụng</option>
+                <option value="0">Nhận biết</option>
+                <option value="1">Thông hiểu</option>
+                <option value="2">Vận dụng cao</option>
               </select>
             </div>
           </div>
@@ -161,7 +162,7 @@ export default defineComponent({
         Level: Number.parseInt(level.value),
         QuestionType: Number.parseInt(questionType.value),
       };
-      addQuestionToCurrentList(data);
+      addQuestionToCurrentList([data]);
       updateAddNewQuestionHandmadeModalStatus(false);
     };
     const updateQuestionContent = (id: string, content: string) => {

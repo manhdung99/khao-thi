@@ -45,7 +45,7 @@
           @click="
             questionDeleteID = question.ID;
             questionDeleteIndex = index as number;
-            updateDeleteQuestionModalStatus(true, 'mainQuestion');
+            updateDeleteQuestionModalStatus(true, 'selectedQuestion');
           "
           class="mr-2 cursor-pointer"
         >
@@ -56,59 +56,28 @@
     <!-- Detail  -->
     <div v-else class="p-4 pt-8 text-gray-600 text-sm relative">
       <span class="absolute right-2 cursor-pointer top-1"
-        ><img
-          @click="
-            showDetail = false;
-            isEdit = false;
-          "
-          class="w-8 h-8"
-          :src="iconTop"
-          alt=""
+        ><img @click="showDetail = false" class="w-8 h-8" :src="iconTop" alt=""
       /></span>
-      <div v-if="!isEdit" v-html="question.Description"></div>
-      <QuillEditor
-        v-else
-        contentType="html"
-        toolbar="full"
-        theme="snow"
-        class="border rounded"
-        v-model:content="question.Description"
-      ></QuillEditor>
+      <div v-html="question.Description"></div>
       <div
         v-for="questionDetail in question.Questions"
         :key="questionDetail.ID"
       >
-        <div class="my-2" v-if="!isEdit" v-html="questionDetail.Content"></div>
+        <div class="my-2" v-html="questionDetail.Content"></div>
         <div>
           <span
             v-for="(answer, index) in questionDetail.Answers"
             :key="answer.ID"
             class="mb-2.5"
-            :class="!isEdit ? 'flex' : ''"
           >
             <span>{{ index + 1 }}.</span>
-            <span class="" v-if="!isEdit" v-html="answer.Content"></span>
-            <QuillEditor
-              v-else
-              contentType="html"
-              toolbar="minimal"
-              theme="snow"
-              class="border rounded h-6"
-              v-model:content="answer.Content"
-            ></QuillEditor>
+            <span class="" v-html="answer.Content"></span>
           </span>
         </div>
       </div>
       <!-- Bottom  -->
       <div class="flex justify-end mt-2">
-        <div v-if="!isEdit" class="flex">
-          <span
-            v-if="canEdit"
-            @click="isEdit = true"
-            class="mr-2 cursor-pointer"
-          >
-            <img :src="editIcon" alt="" />
-          </span>
+        <div class="flex">
           <span class="mr-2 cursor-pointer">
             <img :src="duplicateIcon" alt="" />
           </span>
@@ -116,32 +85,12 @@
             @click="
               questionDeleteID = question.ID;
               questionDeleteIndex = index as number;
-              updateDeleteQuestionModalStatus(true, 'mainQuestion');
+              updateDeleteQuestionModalStatus(true, 'selectedQuestion');
             "
             class="mr-2 cursor-pointer"
           >
             <img :src="removeIcon" alt="" />
           </span>
-        </div>
-        <div v-else>
-          <button
-            @click="
-              resetData();
-              isEdit = false;
-            "
-            class="btn bg-white text-red-500 border border-gray-300 mr-3 w-15"
-          >
-            Huỷ
-          </button>
-          <button
-            @click="
-              updateQuestionInQuestionList(question);
-              isEdit = false;
-            "
-            class="btn bg-indigo text-white w-15"
-          >
-            Lưu
-          </button>
         </div>
       </div>
     </div>
@@ -149,17 +98,17 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
-import { usePopupStore } from "../../stores/popup";
-import { useQuestionBankStore } from "../../stores/question-bank-store";
-import editIcon from "../../assets/image/edit.svg";
-import eyeIcon from "../../assets/image/eye.svg";
-import duplicateIcon from "../../assets/image/duplicateIcon.svg";
-import removeIcon from "../../assets/image/removeIcon.svg";
-import iconTop from "../../assets/image/top-arrow.svg";
+import { usePopupStore } from "../../../stores/popup";
+import { useQuestionBankStore } from "../../../stores/question-bank-store";
+import editIcon from "../../../assets/image/edit.svg";
+import eyeIcon from "../../../assets/image/eye.svg";
+import duplicateIcon from "../../../assets/image/duplicateIcon.svg";
+import removeIcon from "../../../assets/image/removeIcon.svg";
+import iconTop from "../../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
-import PartQuestion from "../type/partQuestion";
+import PartQuestion from "../../type/partQuestion";
 export default defineComponent({
-  name: "QuestionVue",
+  name: "QuestionSelectedVue",
   props: {
     index: {
       type: Number,
@@ -167,10 +116,6 @@ export default defineComponent({
     },
     questionPart: {
       type: Object,
-      required: true,
-    },
-    canEdit: {
-      type: Boolean,
       required: true,
     },
   },
@@ -198,7 +143,6 @@ export default defineComponent({
     });
 
     const showDetail = ref(false);
-    const isEdit = ref(false);
 
     return {
       editIcon,
@@ -206,7 +150,6 @@ export default defineComponent({
       removeIcon,
       showDetail,
       eyeIcon,
-      isEdit,
       iconTop,
       questionDeleteIndex,
       questionDeleteID,
