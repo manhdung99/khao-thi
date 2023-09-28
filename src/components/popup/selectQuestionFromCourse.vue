@@ -18,9 +18,9 @@
           /></span>
         </div>
         <div>
-          <p class="text-sm font-bold mt-2">1. Thiết lập nội dung</p>
+          <div class="text-sm font-bold mt-2 mb-4">1. Thiết lập nội dung</div>
           <div class="mt-2">
-            <p class="text-sm font-bold">Chọn cách nhập nội dung</p>
+            <div class="text-sm font-bold mb-4">Chọn cách nhập nội dung</div>
             <div class="flex items-center text-sm">
               <div class="mr-8 flex items-center">
                 <input
@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class="mt-4 w-full">
-            <p class="text-sm font-bold mb-1">Nhập nội dung</p>
+            <div class="text-sm font-bold mb-1">Nhập nội dung</div>
             <input
               :disabled="!isFillDesOnetime"
               class="input w-1/2"
@@ -114,7 +114,7 @@
 
             <div v-if="!showSelectedSentence" class="mt-6">
               <div v-for="course in courses" :key="course.ID">
-                <p class="font-semibold ml-2 text-green-400">
+                <p class="font-semibold ml-2 text-green-400 mb-4">
                   {{ course.Name }}
                 </p>
                 <UnitVue
