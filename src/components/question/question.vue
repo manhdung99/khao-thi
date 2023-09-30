@@ -138,7 +138,7 @@
               updateQuestionInQuestionList(question);
               isEdit = false;
             "
-            class="btn bg-indigo text-white w-15"
+            class="btn btn-primary"
           >
             Lưu
           </button>

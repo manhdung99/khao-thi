@@ -2,6 +2,24 @@
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
     height: 2.5rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #105277;
+    color: white;
+}
+
+.btn-primary:hover {
+    border: 1px solid #105277;
+    color: #105277;
+    background: white;
+}
+
+.btn-primary:disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
 }
 
 .input {

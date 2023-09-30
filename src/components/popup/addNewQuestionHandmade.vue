@@ -89,7 +89,7 @@
         >
           Đóng
         </button>
-        <button @click="addQuestionToList" class="btn btn-blue">Lưu</button>
+        <button @click="addQuestionToList" class="btn btn-primary">Lưu</button>
       </div>
     </div>
   </div>

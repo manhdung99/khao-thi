@@ -13,9 +13,7 @@
           Tạo ngân hàng câu hỏi
         </div>
         <div>
-          <button class="btn bg-indigo text-white font-light flex items-center">
-            Lưu
-          </button>
+          <button class="btn btn-primary">Lưu</button>
         </div>
       </div>
     </div>
@@ -46,7 +44,7 @@
         <div class="flex flex-col top-4">
           <button
             @click="updateAddNewBankModalStatus(true)"
-            class="btn bg-indigo text-white mt-2"
+            class="btn btn-primary mt-2"
           >
             Thêm câu hỏi
           </button>

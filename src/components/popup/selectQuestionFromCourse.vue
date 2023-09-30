@@ -147,7 +147,11 @@
         >
           Huỷ
         </button>
-        <button @click="saveData()" class="btn bg-indigo text-white w-15">
+        <button
+          :disabled="currentSelectedQuestion.length == 0"
+          @click="saveData()"
+          class="btn w-15 btn-primary"
+        >
           Lưu
         </button>
       </div>
