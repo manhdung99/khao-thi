@@ -3,9 +3,11 @@ import { defineStore } from "pinia";
 export const usePopupStore = defineStore("popupStore", {
   state: () => ({
     openAddNewBankModal: false,
+    openStatisticsBankModal: false,
     openDeleteQuestionModal: false,
     openAddNewQuestionHandmadeModal: false,
     openSelectQuestionFromCourse: false,
+    openSelectQuestionFromBank: false,
     deleteKey: "",
   }),
   getters: {},
@@ -22,6 +24,12 @@ export const usePopupStore = defineStore("popupStore", {
     },
     updateSelectQuestionFromCourseStatus(status: boolean) {
       this.openSelectQuestionFromCourse = status;
+    },
+    updateSelectQuestionFromBankStatus(status: boolean) {
+      this.openSelectQuestionFromBank = status;
+    },
+    updateStatisticsBankModalStatus(status: boolean) {
+      this.openStatisticsBankModal = status;
     },
   },
 });

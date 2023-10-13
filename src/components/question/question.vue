@@ -86,8 +86,14 @@
             class="mb-2.5"
             :class="!isEdit ? 'flex' : ''"
           >
-            <span>{{ index + 1 }}.</span>
-            <span class="" v-if="!isEdit" v-html="answer.Content"></span>
+            <span :class="answer.IsCorrect ? 'text-green font-bold' : ''"
+              >{{ index + 1 }}.</span
+            >
+            <span
+              :class="answer.IsCorrect ? 'text-green font-bold' : ''"
+              v-if="!isEdit"
+              v-html="answer.Content"
+            ></span>
             <QuillEditor
               v-else
               contentType="html"

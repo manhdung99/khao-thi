@@ -7,5 +7,5 @@ export default interface PartQuestion {
   Type: string;
   QuestionType: number;
   Level: number;
-  Questions: Array<any> | null;
+  Questions: Array<any>;
 }

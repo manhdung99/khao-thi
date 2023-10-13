@@ -42,6 +42,9 @@ export default {
           lighter: "#000000e0",
           DEFAULT: "#000",
         },
+        green: {
+          DEFAULT: "#28a745",
+        },
       },
       spacing: {
         12.5: "3.125rem",

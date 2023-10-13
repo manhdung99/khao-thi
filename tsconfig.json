@@ -13,7 +13,7 @@
     "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env"],
+    "types": ["webpack-env", "jquery"],
     "paths": {
       "@/*": ["src/*"]
     },
@@ -24,7 +24,9 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "src/**/*.ts", // Include your other TypeScript files
+    "src/shim-vue.d.ts" // Include your custom Vue type declaration
   ],
   "exclude": ["node_modules"]
 }

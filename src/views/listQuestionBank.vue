@@ -57,7 +57,7 @@
         </div>
       </div>
       <!-- Table  -->
-      <div class="mt-4">
+      <div v-if="questionBanks.length > 0" class="mt-4">
         <a-table
           sticky
           :columns="columns"
@@ -107,6 +107,7 @@ import type { Dayjs } from "dayjs";
 import { useQuestionBankStore } from "../stores/question-bank-store";
 import type { TableColumnsType } from "ant-design-vue";
 import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
 export default defineComponent({
   name: "ListQuestionBank",
   setup() {
@@ -115,6 +116,7 @@ export default defineComponent({
       { value: "lucy", label: "Lucy" },
       { value: "tom", label: "Tom" },
     ]);
+    const route = useRoute();
     const { getQuestionBankData } = useQuestionBankStore();
     const { questionBanks } = storeToRefs(useQuestionBankStore());
     type RangeValue = [Dayjs, Dayjs];
@@ -174,7 +176,7 @@ export default defineComponent({
       console.log(`remove${id}`);
     };
     onMounted(() => {
-      getQuestionBankData();
+      getQuestionBankData(route.params.subjectID as string);
     });
     return {
       plusIcon,

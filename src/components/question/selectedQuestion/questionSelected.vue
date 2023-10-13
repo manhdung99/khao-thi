@@ -70,8 +70,13 @@
             :key="answer.ID"
             class="mb-2.5"
           >
-            <span>{{ index + 1 }}.</span>
-            <span class="" v-html="answer.Content"></span>
+            <span :class="answer.IsCorrect ? 'text-green font-bold' : ''"
+              >{{ index + 1 }}.</span
+            >
+            <span
+              :class="answer.IsCorrect ? 'text-green font-bold' : ''"
+              v-html="answer.Content"
+            ></span>
           </span>
         </div>
       </div>

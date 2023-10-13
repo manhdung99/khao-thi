@@ -19,7 +19,13 @@
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
         </div>
 
-        <div class="card">
+        <div
+          @click="
+            updateSelectQuestionFromBankStatus(true);
+            updateAddNewBankModalStatus(false);
+          "
+          class="card"
+        >
           <div class="font-semibold">Chọn từ ngân hàng khác</div>
           <div class="text-sm">Chọn từ thư viện sách của Eduso</div>
         </div>
@@ -52,12 +58,14 @@ export default defineComponent({
       updateAddNewBankModalStatus,
       updateAddNewQuestionHandmadeModalStatus,
       updateSelectQuestionFromCourseStatus,
+      updateSelectQuestionFromBankStatus,
     } = usePopupStore();
     return {
       closeIcon,
       updateAddNewBankModalStatus,
       updateAddNewQuestionHandmadeModalStatus,
       updateSelectQuestionFromCourseStatus,
+      updateSelectQuestionFromBankStatus,
     };
   },
 });

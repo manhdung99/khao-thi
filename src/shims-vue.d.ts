@@ -12,3 +12,10 @@ declare module "*.jpg" {
   const content: any;
   export default content;
 }
+declare module "vue/types/vue" {
+  interface Vue {
+    $directive: {
+      [key: string]: any; // You can specify the type if needed
+    };
+  }
+}

@@ -8,11 +8,13 @@ import { createPinia } from "pinia";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import "@vueup/vue-quill/dist/vue-quill.bubble.css";
+import BootstrapVue3 from "bootstrap-vue-3";
 const pinia = createPinia();
 const app = createApp(App);
 
 app.use(pinia);
 app.use(Antd);
 app.use(router);
+app.use(BootstrapVue3);
 app.component("QuillEditor", QuillEditor);
 app.mount("#app");

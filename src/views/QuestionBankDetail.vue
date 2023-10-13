@@ -68,6 +68,9 @@
   <Teleport to="body">
     <selectQuestionFromCourse v-if="openSelectQuestionFromCourse" />
   </Teleport>
+  <Teleport to="body">
+    <SelectQuestionFromBank v-if="openSelectQuestionFromBank" />
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -76,6 +79,7 @@ import AddNewPopup from "../components/popup/addNewPopup.vue";
 import deletePopup from "../components/popup/deleteQuestionPopup.vue";
 import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
 import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCourse.vue";
+import SelectQuestionFromBank from "@/components/popup/selectQuestionFromBank.vue";
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
@@ -89,6 +93,7 @@ export default defineComponent({
     deletePopup,
     addNewQuestionHandmade,
     selectQuestionFromCourse,
+    SelectQuestionFromBank,
   },
   setup() {
     const {
@@ -96,6 +101,7 @@ export default defineComponent({
       openDeleteQuestionModal,
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
+      openSelectQuestionFromBank,
     } = storeToRefs(usePopupStore());
     const { updateAddNewBankModalStatus } = usePopupStore();
     const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
@@ -110,6 +116,7 @@ export default defineComponent({
       currentBankQuestions,
       updateAddNewBankModalStatus,
       deleteQuestion,
+      openSelectQuestionFromBank,
     };
   },
 });

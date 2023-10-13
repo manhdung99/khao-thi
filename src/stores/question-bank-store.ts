@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import convertData from "../uses/convertData";
 import PartQuestion from "@/components/type/partQuestion";
+import axios from "axios";
 export const useQuestionBankStore = defineStore("questionBankStore", {
   state: () => ({
     questionBanks: [] as Array<any>,
@@ -10,7 +11,24 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
   }),
   getters: {},
   actions: {
-    getQuestionBankData() {
+    async getQuestionBankData(subjectID: string) {
+      // const url =
+      //   process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_LIST_BANK;
+      // const newData = new FormData();
+      // newData.append("PageSize", "100");
+      // newData.append("PageIndex", "1");
+      // newData.append("MainSubjectID", subjectID);
+      // newData.append("SearchText", "");
+      // await axios
+      //   .post(url, newData, {
+      //     headers: {
+      //       Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiI1ZDgwOGUyZWNmOWE4MjFiZGM5ZGFmODEiLCJlbWFpbCI6InZpZXRwaHVuZy5pdEBnbWFpbC5jb20iLCJ1bmlxdWVfbmFtZSI6IlBodW5nIER1YyBWaWV0Iiwicm9sZSI6InRlYWNoZXIiLCJUeXBlIjoidGVhY2hlciIsIkNoZWNrIjoiWmRQNEVqIiwibmJmIjoxNjk2MjE1MTg3LCJleHAiOjE3Mjc4Mzc1ODcsImlhdCI6MTY5NjIxNTE4N30.3REB3CPSjv-di39fmnkombmugCN5IFtzoS6kdG9Cjik`,
+      //     },
+      //   })
+      //   .then((response) => {
+      //     console.log(response);
+      //     this.questionBanks = response.data;
+      //   });
       const { convertTimestampToDateTime } = convertData();
       let banks = [
         {
