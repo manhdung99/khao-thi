@@ -8,11 +8,11 @@
         >{{ index + 1 }}. Câu hỏi số {{ index + 1 }}</span
       >
       <span class="text-sm text-black-lighter"
-        >{{ question.QuestionType == 0 ? "Lý thuyết" : "Bài tập" }} |
+        >{{ question.TypePart == 1 ? "Lý thuyết" : "Bài tập" }} |
         {{
-          question.QuestionType == 0
+          question.LevelPart == 1
             ? "Nhận biết"
-            : question.QuestionType == 1
+            : question.LevelPart == 2
             ? "Thông hiểu"
             : "Vận dụng"
         }}
@@ -65,6 +65,7 @@
           :src="iconTop"
           alt=""
       /></span>
+      <span v-if="!isEdit" class="font-bold" v-html="question.Title"></span>
       <div v-if="!isEdit" v-html="question.Description"></div>
       <QuillEditor
         v-else
@@ -79,7 +80,7 @@
         :key="questionDetail.ID"
       >
         <div class="my-2" v-if="!isEdit" v-html="questionDetail.Content"></div>
-        <div>
+        <div class="flex flex-col">
           <span
             v-for="(answer, index) in questionDetail.Answers"
             :key="answer.ID"

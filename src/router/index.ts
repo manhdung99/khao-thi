@@ -17,6 +17,12 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/bank-detail/",
+    name: "newBank",
+    component: QuestionBankVue,
+    meta: { title: "Ngân hàng câu hỏi" },
+  },
+  {
+    path: "/bank-detail/:bankID",
     name: "bankDetail",
     component: QuestionBankVue,
     meta: { title: "Ngân hàng câu hỏi" },

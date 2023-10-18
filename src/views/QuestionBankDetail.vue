@@ -51,7 +51,11 @@
           <button class="btn bg-white text-red-500 border border-gray-300 mt-4">
             Xoá ngân hàng
           </button>
-          <span class="text-blue underline mt-4">Xem thống kê</span>
+          <span
+            @click="openStatisticsBankModal = true"
+            class="text-blue underline mt-4 cursor-pointer"
+            >Xem thống kê</span
+          >
         </div>
       </div>
     </div>
@@ -71,6 +75,17 @@
   <Teleport to="body">
     <SelectQuestionFromBank v-if="openSelectQuestionFromBank" />
   </Teleport>
+  <Teleport to="body">
+    <statisticsPopup v-if="openStatisticsBankModal" />
+  </Teleport>
+  <Teleport to="body">
+    <div
+      v-if="isLoading"
+      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center"
+    >
+      <img :src="loadingIcon" alt="" />
+    </div>
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -80,11 +95,14 @@ import deletePopup from "../components/popup/deleteQuestionPopup.vue";
 import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
 import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCourse.vue";
 import SelectQuestionFromBank from "@/components/popup/selectQuestionFromBank.vue";
+import statisticsPopup from "@/components/popup/statisticsPopup.vue";
+import loadingIcon from "../assets/image/loading-gif.gif";
 import { defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
 import { useQuestionBankStore } from "../stores/question-bank-store";
 import { usePopupStore } from "../stores/popup";
+import { useRoute } from "vue-router";
 export default defineComponent({
   name: "QuestionBankVue",
   components: {
@@ -94,6 +112,7 @@ export default defineComponent({
     addNewQuestionHandmade,
     selectQuestionFromCourse,
     SelectQuestionFromBank,
+    statisticsPopup,
   },
   setup() {
     const {
@@ -102,11 +121,16 @@ export default defineComponent({
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
       openSelectQuestionFromBank,
+      openStatisticsBankModal,
     } = storeToRefs(usePopupStore());
     const { updateAddNewBankModalStatus } = usePopupStore();
+    const { isLoading } = storeToRefs(usePopupStore());
     const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
     const { currentBankQuestions } = storeToRefs(useQuestionBankStore());
-    onMounted(getCurrentBankQuestions);
+    const route = useRoute();
+    onMounted(() => {
+      getCurrentBankQuestions(route.params.bankID as string);
+    });
     return {
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
@@ -114,9 +138,12 @@ export default defineComponent({
       openDeleteQuestionModal,
       leftIcon,
       currentBankQuestions,
+      openSelectQuestionFromBank,
+      openStatisticsBankModal,
+      loadingIcon,
+      isLoading,
       updateAddNewBankModalStatus,
       deleteQuestion,
-      openSelectQuestionFromBank,
     };
   },
 });

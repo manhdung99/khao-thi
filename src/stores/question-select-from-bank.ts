@@ -1,7 +1,8 @@
 import PartQuestion from "@/components/type/partQuestion";
 import axios from "axios";
 import { defineStore } from "pinia";
-import Question from "@/components/type/question";
+import { useQuestionBankStore } from "./question-bank-store";
+import { usePopupStore } from "./popup";
 import Bank from "@/components/type/bank";
 export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
   state: () => ({
@@ -10,10 +11,13 @@ export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
   getters: {},
   actions: {
     async getBanks(): Promise<void> {
+      const popup = usePopupStore();
+      popup.isLoading = true;
+      const { subjectID } = useQuestionBankStore();
       const url =
         "https://alpha.eduso.vn/eduso/teacher/ExamManage/GetListQuestionBank";
       const params = new FormData();
-      params.append("MainSubjectID", "6073df26c549a13e4c631636");
+      params.append("MainSubjectID", subjectID);
       console.log(params);
       const response = await axios.post(url, params, {
         headers: {
@@ -24,6 +28,7 @@ export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
       if (response.data.StatusCode == 1) {
         this.bankList = response.data.Data;
       }
+      popup.isLoading = false;
     },
     async getTagQuiz(obj: Bank): Promise<void> {
       const bankID = obj.ID;

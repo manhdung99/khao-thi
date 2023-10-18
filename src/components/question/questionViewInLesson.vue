@@ -14,18 +14,23 @@
       placeholder="Nội dung"
     />
     <select
-      v-model="partQuestionDetail.QuestionType"
+      v-model="partQuestionDetail.TypePart"
       class="input mr-2"
       name=""
       id=""
     >
-      <option :value="0">Lý thuyết</option>
+      <option :value="2">Lý thuyết</option>
       <option :value="1">Bài tập</option>
     </select>
-    <select v-model="partQuestionDetail.Level" class="input mr-4" name="" id="">
-      <option :value="0">Nhận biết</option>
-      <option :value="1">Thông hiểu</option>
-      <option :value="2">Vận dụng</option>
+    <select
+      v-model="partQuestionDetail.LevelPart"
+      class="input mr-4"
+      name=""
+      id=""
+    >
+      <option :value="1">Nhận biết</option>
+      <option :value="2">Thông hiểu</option>
+      <option :value="3">Vận dụng</option>
     </select>
     <input
       @click="updateListSelectedQuestion"
@@ -66,8 +71,8 @@ export default defineComponent({
       Media: null,
       Title: "",
       Type: "",
-      QuestionType: 0,
-      Level: 0,
+      TypePart: 0,
+      LevelPart: 0,
       Questions: [],
     });
     const { currentSelectedQuestion } = storeToRefs(useSelectQuestionStore());

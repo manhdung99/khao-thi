@@ -57,14 +57,17 @@
         </div>
       </div>
       <!-- Table  -->
-      <div v-if="questionBanks.length > 0" class="mt-4">
+      <div v-if="bankList.length > 0" class="mt-4">
         <a-table
           sticky
           :columns="columns"
-          :data-source="questionBanks"
+          :data-source="bankList"
           :scroll="{ x: 1500 }"
         >
-          <template #bodyCell="{ column, record }">
+          <template #bodyCell="{ column, record, index }">
+            <template v-if="column.key == '#'">
+              <div>{{ index + 1 }}</div>
+            </template>
             <template v-if="column.key === 'operation'">
               <div class="flex">
                 <span
@@ -79,7 +82,7 @@
               </div>
             </template>
             <template v-if="column.key === 'Name'">
-              <router-link :to="`/bank-detail/`">
+              <router-link :to="`/bank-detail/${record.ID}`">
                 <div class="flex text-blue">
                   {{ record.Name }}
                 </div>
@@ -95,6 +98,14 @@
       </div>
     </div>
   </div>
+  <Teleport to="body">
+    <div
+      v-if="isLoading"
+      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center"
+    >
+      <img :src="loadingIcon" alt="" />
+    </div>
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -102,12 +113,15 @@ import { defineComponent, onMounted, ref } from "vue";
 import plusIcon from "../assets/image/PlusCircleOutlined.svg";
 import duplicateIcon from "../assets/image/duplicateIcon.svg";
 import removeIcon from "../assets/image/removeIcon.svg";
+import loadingIcon from "../assets/image/loading-gif.gif";
 import type { SelectProps } from "ant-design-vue";
 import type { Dayjs } from "dayjs";
 import { useQuestionBankStore } from "../stores/question-bank-store";
+import { useSelectQuestionFromBank } from "../stores/question-select-from-bank";
 import type { TableColumnsType } from "ant-design-vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
+import { usePopupStore } from "@/stores/popup";
 export default defineComponent({
   name: "ListQuestionBank",
   setup() {
@@ -117,7 +131,10 @@ export default defineComponent({
       { value: "tom", label: "Tom" },
     ]);
     const route = useRoute();
-    const { getQuestionBankData } = useQuestionBankStore();
+    const { updateSubjectID } = useQuestionBankStore();
+    const { getBanks } = useSelectQuestionFromBank();
+    const { isLoading } = storeToRefs(usePopupStore());
+    const { bankList } = storeToRefs(useSelectQuestionFromBank());
     const { questionBanks } = storeToRefs(useQuestionBankStore());
     type RangeValue = [Dayjs, Dayjs];
     const option = ref();
@@ -127,7 +144,7 @@ export default defineComponent({
       {
         title: "#",
         dataIndex: "index",
-        key: "name",
+        key: "#",
         fixed: "left",
         width: 100,
       },
@@ -176,7 +193,8 @@ export default defineComponent({
       console.log(`remove${id}`);
     };
     onMounted(() => {
-      getQuestionBankData(route.params.subjectID as string);
+      updateSubjectID(route.params.subjectID as string);
+      getBanks();
     });
     return {
       plusIcon,
@@ -188,6 +206,9 @@ export default defineComponent({
       questionBanks,
       removeIcon,
       duplicateIcon,
+      bankList,
+      loadingIcon,
+      isLoading,
       duplicateBanks,
       removeBanks,
     };

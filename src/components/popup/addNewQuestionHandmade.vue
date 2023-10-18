@@ -132,8 +132,8 @@ export default defineComponent({
           Answers: [],
           Type: "",
           CloneAnswers: "",
-          Level: 0,
-          QuestionType: 0,
+          LevelPart: 0,
+          TypePart: 0,
         },
       ];
     };
@@ -159,8 +159,8 @@ export default defineComponent({
         Media: null,
         Title: title.value,
         Questions: questionArray.value,
-        Level: Number.parseInt(level.value),
-        QuestionType: Number.parseInt(questionType.value),
+        LevelPart: Number.parseInt(level.value),
+        TypePart: Number.parseInt(questionType.value),
       };
       addQuestionToCurrentList([data]);
       updateAddNewQuestionHandmadeModalStatus(false);

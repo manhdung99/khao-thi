@@ -9,6 +9,7 @@ export const usePopupStore = defineStore("popupStore", {
     openSelectQuestionFromCourse: false,
     openSelectQuestionFromBank: false,
     deleteKey: "",
+    isLoading: false,
   }),
   getters: {},
   actions: {
