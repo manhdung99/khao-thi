@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import PartQuestion from "@/components/type/partQuestion";
 import Question from "@/components/type/question";
+import { generateRandomHexId } from "../uses/function";
 export const useSelectQuestionStore = defineStore("selectQuestionStore", {
   state: () => ({
     courses: [] as Array<any>,
@@ -37,8 +38,8 @@ export const useSelectQuestionStore = defineStore("selectQuestionStore", {
                       OriginID: null,
                       ParentID: "62c7eb2f5be48621708erwdfbd",
                       Point: 0,
-                      Level: 0,
-                      QuestionType: 0,
+                      LevelPart: 1,
+                      TypePart: 1,
                       Questions: [
                         {
                           Answers: [
@@ -113,8 +114,8 @@ export const useSelectQuestionStore = defineStore("selectQuestionStore", {
                       OriginID: null,
                       ParentID: "62c7eb2f5be48621708erwerf",
                       Point: 0,
-                      Level: 0,
-                      QuestionType: 0,
+                      LevelPart: 1,
+                      TypePart: 1,
                       Questions: [
                         {
                           Answers: [
@@ -164,6 +165,18 @@ export const useSelectQuestionStore = defineStore("selectQuestionStore", {
       this.currentSelectedQuestion = this.currentSelectedQuestion.filter(
         (question) => question.ID != id
       );
+    },
+    duplicateSelectedQuestion(id: string) {
+      const currentDuplicateQuestion = this.currentSelectedQuestion.find(
+        (question) => question.ID == id
+      );
+      const newID = generateRandomHexId();
+      const newQuestion = { ...currentDuplicateQuestion, ID: newID };
+      this.currentSelectedQuestion = [
+        newQuestion,
+        ...this.currentSelectedQuestion,
+      ];
+      console.log(this.currentSelectedQuestion);
     },
   },
 });

@@ -17,8 +17,11 @@ export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
       const url =
         "https://alpha.eduso.vn/eduso/teacher/ExamManage/GetListQuestionBank";
       const params = new FormData();
-      params.append("MainSubjectID", subjectID);
-      console.log(params);
+      if (subjectID == "") {
+        params.append("MainSubjectID", "6073df26c549a13e4c631636");
+      } else {
+        params.append("MainSubjectID", subjectID);
+      }
       const response = await axios.post(url, params, {
         headers: {
           Authorization:
@@ -28,6 +31,7 @@ export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
       if (response.data.StatusCode == 1) {
         this.bankList = response.data.Data;
       }
+
       popup.isLoading = false;
     },
     async getTagQuiz(obj: Bank): Promise<void> {
@@ -43,7 +47,6 @@ export const useSelectQuestionFromBank = defineStore("selectQuestionFromBank", {
       });
       if (response) {
         obj.Tags = response.data.Data;
-        console.log(response.data.Data);
       }
     },
     async getListPart(bank: Bank, tag: any): Promise<Array<PartQuestion>> {

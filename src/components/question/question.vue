@@ -67,14 +67,11 @@
       /></span>
       <span v-if="!isEdit" class="font-bold" v-html="question.Title"></span>
       <div v-if="!isEdit" v-html="question.Description"></div>
-      <QuillEditor
+      <CKEditorCustom
         v-else
-        contentType="html"
-        toolbar="full"
-        theme="snow"
-        class="border rounded"
-        v-model:content="question.Description"
-      ></QuillEditor>
+        :model-value="question.Description"
+        @update:model-value="(newValue:any) => (question.Description = newValue)"
+      />
       <div
         v-for="questionDetail in question.Questions"
         :key="questionDetail.ID"
@@ -95,14 +92,19 @@
               v-if="!isEdit"
               v-html="answer.Content"
             ></span>
-            <QuillEditor
+            <CKEditorCustom
+              v-else
+              :model-value="answer.Content"
+              @update:model-value="(newValue:any) => (answer.Content = newValue)"
+            />
+            <!-- <QuillEditor
               v-else
               contentType="html"
               toolbar="minimal"
               theme="snow"
               class="border rounded h-6"
               v-model:content="answer.Content"
-            ></QuillEditor>
+            ></QuillEditor> -->
           </span>
         </div>
       </div>
@@ -165,8 +167,12 @@ import removeIcon from "../../assets/image/removeIcon.svg";
 import iconTop from "../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
 import PartQuestion from "../type/partQuestion";
+import CKEditorCustom from "../custom/CKEditorCustom.vue";
 export default defineComponent({
   name: "QuestionVue",
+  components: {
+    CKEditorCustom,
+  },
   props: {
     index: {
       type: Number,

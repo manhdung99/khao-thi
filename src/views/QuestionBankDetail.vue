@@ -30,7 +30,7 @@
           <!-- Chưa có câu hỏi  -->
           <!-- <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div> -->
           <!-- Có câu hỏi  -->
-          <div class="list-question mt-4">
+          <div class="list-question mt-4 scroll-area">
             <questionVue
               v-for="(question, index) in currentBankQuestions"
               :key="question.ID"
@@ -67,6 +67,9 @@
     <deletePopup v-if="openDeleteQuestionModal" />
   </Teleport>
   <Teleport to="body">
+    <duplicatePopup v-if="openDuplicateQuestionModal" />
+  </Teleport>
+  <Teleport to="body">
     <addNewQuestionHandmade v-if="openAddNewQuestionHandmadeModal" />
   </Teleport>
   <Teleport to="body">
@@ -81,7 +84,7 @@
   <Teleport to="body">
     <div
       v-if="isLoading"
-      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center"
+      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center bg-modal z-10"
     >
       <img :src="loadingIcon" alt="" />
     </div>
@@ -92,6 +95,7 @@
 import questionVue from "../components/question/question.vue";
 import AddNewPopup from "../components/popup/addNewPopup.vue";
 import deletePopup from "../components/popup/deleteQuestionPopup.vue";
+import duplicatePopup from "../components/popup/duplicateQuestionPopup.vue";
 import addNewQuestionHandmade from "@/components/popup/addNewQuestionHandmade.vue";
 import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCourse.vue";
 import SelectQuestionFromBank from "@/components/popup/selectQuestionFromBank.vue";
@@ -109,6 +113,7 @@ export default defineComponent({
     AddNewPopup,
     questionVue,
     deletePopup,
+    duplicatePopup,
     addNewQuestionHandmade,
     selectQuestionFromCourse,
     SelectQuestionFromBank,
@@ -118,6 +123,7 @@ export default defineComponent({
     const {
       openAddNewBankModal,
       openDeleteQuestionModal,
+      openDuplicateQuestionModal,
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
       openSelectQuestionFromBank,
@@ -136,6 +142,7 @@ export default defineComponent({
       openSelectQuestionFromCourse,
       openAddNewBankModal,
       openDeleteQuestionModal,
+      openDuplicateQuestionModal,
       leftIcon,
       currentBankQuestions,
       openSelectQuestionFromBank,
@@ -156,5 +163,8 @@ export default defineComponent({
 }
 .question-detail .ql-container.ql-snow {
   min-height: 50px;
+}
+.question-bank-detail .list-question {
+  max-height: calc(100vh - 200px);
 }
 </style>

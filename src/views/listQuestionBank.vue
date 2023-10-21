@@ -101,7 +101,7 @@
   <Teleport to="body">
     <div
       v-if="isLoading"
-      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center"
+      class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center bg-modal z-10"
     >
       <img :src="loadingIcon" alt="" />
     </div>

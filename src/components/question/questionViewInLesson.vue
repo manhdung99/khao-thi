@@ -19,8 +19,8 @@
       name=""
       id=""
     >
-      <option :value="2">Lý thuyết</option>
-      <option :value="1">Bài tập</option>
+      <option :value="1">Lý thuyết</option>
+      <option :value="2">Bài tập</option>
     </select>
     <select
       v-model="partQuestionDetail.LevelPart"

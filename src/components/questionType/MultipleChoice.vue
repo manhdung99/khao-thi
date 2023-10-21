@@ -13,14 +13,18 @@
       >
         <img class="w-8 h-8" :src="binIcon" alt="" />
       </span>
-      <QuillEditor
+      <CKEditorCustom
+        :model-value="questionContent"
+        @update:model-value="(newValue:any) => (questionContent = newValue)"
+      />
+      <!-- <QuillEditor
         contentType="html"
         toolbar="full"
         theme="bubble"
         class="border rounded"
         v-model:content="questionContent"
         @update:content="updateQuestionContent(question.ID, questionContent)"
-      />
+      /> -->
     </div>
     <!-- Answer  -->
     <div>
@@ -37,14 +41,18 @@
             >
               X
             </div>
-            <QuillEditor
+            <CKEditorCustom
+              :model-value="answer.Content"
+              @update:model-value="(newValue:any) => (answer.Content = newValue)"
+            />
+            <!-- <QuillEditor
               contentType="html"
               toolbar="full"
               theme="snow"
               class="border rounded"
               v-model:content="answer.Content"
               @update:content="updateQuestionAnswer(question.ID, answerArray)"
-            />
+            /> -->
             <input
               class="absolute top-2 right-5 w-5 h-5 cursor-pointer"
               type="checkbox"
@@ -69,8 +77,12 @@
 import { defineComponent, onMounted, ref, watch } from "vue";
 import binIcon from "../../assets/image/noun-bin.svg";
 import Answer from "../type/answer";
+import CKEditorCustom from "../custom/CKEditorCustom.vue";
 export default defineComponent({
   name: "MultipleChoice",
+  components: {
+    CKEditorCustom,
+  },
   props: {
     index: {
       type: Number,

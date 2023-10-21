@@ -8,6 +8,8 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
     currentBankQuestions: [] as Array<PartQuestion>,
     questionDeleteID: "",
     questionDeleteIndex: 0,
+    questionDuplicateID: "",
+    questionDuplicateIndex: 0,
     subjectID: "",
   }),
   getters: {},
@@ -30,6 +32,8 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
         if (response) {
           this.currentBankQuestions = response.data.Data;
         }
+      } else {
+        this.currentBankQuestions = [];
       }
       popUp.isLoading = false;
     },

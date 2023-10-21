@@ -38,14 +38,7 @@
         <span @click="showDetail = true" class="mr-2 cursor-pointer">
           <img :src="eyeIcon" alt="" />
         </span>
-        <span
-          @click="
-            questionDuplicateID = question.ID;
-            questionDuplicateIndex = index as number;
-            updateDuplicateQuestionModalStatus(true, 'selectedQuestion');
-          "
-          class="mr-2 cursor-pointer"
-        >
+        <!-- <span class="mr-2 cursor-pointer">
           <img :src="duplicateIcon" alt="" />
         </span>
         <span
@@ -57,7 +50,7 @@
           class="mr-2 cursor-pointer"
         >
           <img :src="removeIcon" alt="" />
-        </span>
+        </span> -->
       </div>
     </div>
     <!-- Detail  -->
@@ -89,18 +82,8 @@
         </div>
       </div>
       <!-- Bottom  -->
-      <div class="flex justify-end mt-2">
+      <!-- <div class="flex justify-end mt-2">
         <div class="flex">
-          <span
-            @click="
-              questionDuplicateID = question.ID;
-              questionDuplicateIndex = index as number;
-              updateDuplicateQuestionModalStatus(true, 'selectedQuestion');
-            "
-            class="mr-2 cursor-pointer"
-          >
-            <img :src="duplicateIcon" alt="" />
-          </span>
           <span
             @click="
               questionDeleteID = question.ID;
@@ -112,7 +95,7 @@
             <img :src="removeIcon" alt="" />
           </span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -128,7 +111,7 @@ import iconTop from "../../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
 import PartQuestion from "../../type/partQuestion";
 export default defineComponent({
-  name: "QuestionSelectedVue",
+  name: "QuestionSelectedBank",
   props: {
     index: {
       type: Number,
@@ -140,22 +123,16 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const {
-      updateAddNewBankModalStatus,
-      updateDeleteQuestionModalStatus,
-      updateDuplicateQuestionModalStatus,
-    } = usePopupStore();
+    const { updateAddNewBankModalStatus, updateDeleteQuestionModalStatus } =
+      usePopupStore();
     const { deleteQuestion } = useQuestionBankStore();
 
     // Remove the initialization of question with props.questionPart
     const question = ref<PartQuestion>();
 
-    const {
-      questionDeleteID,
-      questionDuplicateID,
-      questionDuplicateIndex,
-      questionDeleteIndex,
-    } = storeToRefs(useQuestionBankStore());
+    const { questionDeleteID, questionDeleteIndex } = storeToRefs(
+      useQuestionBankStore()
+    );
     const { updateQuestionInQuestionList } = useQuestionBankStore();
 
     const resetData = () => {
@@ -177,14 +154,11 @@ export default defineComponent({
       showDetail,
       eyeIcon,
       iconTop,
-      questionDuplicateID,
-      questionDuplicateIndex,
       questionDeleteIndex,
       questionDeleteID,
       question,
       updateAddNewBankModalStatus,
       updateDeleteQuestionModalStatus,
-      updateDuplicateQuestionModalStatus,
       deleteQuestion,
       updateQuestionInQuestionList,
       resetData,

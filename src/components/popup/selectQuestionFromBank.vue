@@ -59,7 +59,7 @@
             </div>
             <div class="h-full" v-else>
               <div
-                class="list-question-part scroll"
+                class="list-question-part scroll h-full"
                 v-if="currentListPartQuestion.length > 0"
               >
                 <div
@@ -77,7 +77,7 @@
                       type="checkbox"
                     />
                   </div>
-                  <selectedQuestion
+                  <selectedQuestionBank
                     :questionPart="question"
                     :index="index"
                     class="border flex-1"
@@ -116,14 +116,14 @@ import closeIcon from "../../assets/image/close-icon.svg";
 import { usePopupStore } from "@/stores/popup";
 import { useSelectQuestionFromBank } from "@/stores/question-select-from-bank";
 import { storeToRefs } from "pinia";
-import selectedQuestion from "../question/selectedQuestion/questionSelected.vue";
+import selectedQuestionBank from "../question/selectedQuestionBank/questionSelectedBank.vue";
 import Bank from "../type/bank";
 import PartQuestion from "../type/partQuestion";
 import { useQuestionBankStore } from "@/stores/question-bank-store";
 export default defineComponent({
   name: "SelectQuestionBank",
   components: {
-    selectedQuestion,
+    selectedQuestionBank,
   },
   setup() {
     const isLoading = ref(false);
@@ -181,9 +181,7 @@ export default defineComponent({
         );
     };
     onMounted(() => {
-      isLoading.value = true;
       getBanks();
-      isLoading.value = false;
     });
     return {
       isLoading,

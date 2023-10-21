@@ -4,23 +4,23 @@
       class="w-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-md shadow-lg z-10"
     >
       <h2 class="mb-4">
-        Bạn có chắc chắn muốn xoá
+        Bạn có chắc chắn muốn nhân bản
         <span class="text-red font-bold"
-          >câu hỏi số {{ questionDeleteIndex + 1 }} </span
+          >câu hỏi số {{ questionDuplicateIndex + 1 }} </span
         >?
       </h2>
       <div class="flex justify-end">
         <button
           @click="
-            handleDetele(questionDeleteID);
-            updateDeleteQuestionModalStatus(false);
+            handleDuplicate(questionDuplicateID);
+            updateDuplicateQuestionModalStatus(false);
           "
           class="bg-red-500 text-white py-2 px-4 rounded mr-4 hover:opacity-90"
         >
-          Xoá
+          Nhân bản
         </button>
         <button
-          @click="updateDeleteQuestionModalStatus(false)"
+          @click="updateDuplicateQuestionModalStatus(false)"
           class="bg-blue-500 text-white py-2 px-4 rounded hover:opacity-90"
         >
           Hủy bỏ
@@ -37,32 +37,30 @@ import { useQuestionBankStore } from "../../stores/question-bank-store";
 import { storeToRefs } from "pinia";
 import { useSelectQuestionStore } from "@/stores/question-select-flow-store";
 export default defineComponent({
-  name: "DeleteQuestionPopup",
+  name: "DuplicateQuestionPopup",
   setup() {
-    const { updateDeleteQuestionModalStatus } = usePopupStore();
-    const { deleteKey } = storeToRefs(usePopupStore());
+    const { updateDuplicateQuestionModalStatus } = usePopupStore();
+    const { duplicateKey } = storeToRefs(usePopupStore());
     const { deleteQuestion } = useQuestionBankStore();
-    const { deleteSelectedQuestion } = useSelectQuestionStore();
-    const { questionDeleteID, questionDeleteIndex } = storeToRefs(
+    const { duplicateSelectedQuestion } = useSelectQuestionStore();
+    const { questionDuplicateID, questionDuplicateIndex } = storeToRefs(
       useQuestionBankStore()
     );
-    const handleDetele = (id: string) => {
-      console.log("here");
-
-      if (deleteKey.value == "selectedQuestion") {
-        deleteSelectedQuestion(id);
-      } else if (deleteKey.value == "mainQuestion") {
+    const handleDuplicate = (id: string) => {
+      if (duplicateKey.value == "selectedQuestion") {
+        duplicateSelectedQuestion(id);
+      } else if (duplicateKey.value == "mainQuestion") {
         deleteQuestion(id);
       }
     };
     return {
       closeIcon,
-      updateDeleteQuestionModalStatus,
-      deleteSelectedQuestion,
+      updateDuplicateQuestionModalStatus,
+      duplicateSelectedQuestion,
       deleteQuestion,
-      handleDetele,
-      questionDeleteID,
-      questionDeleteIndex,
+      handleDuplicate,
+      questionDuplicateID,
+      questionDuplicateIndex,
     };
   },
 });
