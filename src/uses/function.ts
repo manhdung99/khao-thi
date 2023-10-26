@@ -43,8 +43,6 @@ export async function uploadImageAPI(img: any) {
   }
 }
 export function generateRandomHexId() {
-  console.log("herre");
-
   const characters = "0123456789abcdef";
   let result = "";
   for (let i = 0; i < 16; i++) {

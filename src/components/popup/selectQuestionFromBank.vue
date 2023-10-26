@@ -80,6 +80,7 @@
                   <selectedQuestionBank
                     :questionPart="question"
                     :index="index"
+                    :answerListQuiz2="answerListQuiz2"
                     class="border flex-1"
                   />
                 </div>
@@ -120,6 +121,9 @@ import selectedQuestionBank from "../question/selectedQuestionBank/questionSelec
 import Bank from "../type/bank";
 import PartQuestion from "../type/partQuestion";
 import { useQuestionBankStore } from "@/stores/question-bank-store";
+import { addStaticLink } from "../../uses/addStaticLink";
+import Answer from "../type/answer";
+import Question from "../type/question";
 export default defineComponent({
   name: "SelectQuestionBank",
   components: {
@@ -131,6 +135,7 @@ export default defineComponent({
     const { getBanks, getTagQuiz, getListPart } = useSelectQuestionFromBank();
     const { bankList } = storeToRefs(useSelectQuestionFromBank());
     const { addQuestionToCurrentList } = useQuestionBankStore();
+    const answerListQuiz2 = ref<Answer[]>([]);
     const toggleTag = (obj: Bank) => {
       const id = obj.ID;
       if (obj.Tags == null) {
@@ -153,6 +158,10 @@ export default defineComponent({
     const getListPartByTag = async (bank: Bank, tag: any) => {
       isLoading.value = true;
       currentListPartQuestion.value = await getListPart(bank, tag);
+      currentListPartQuestion.value.forEach((part) => {
+        part.Description = addStaticLink(part.Description);
+      });
+      createListAnswerQuiz2();
       isLoading.value = false;
     };
     const currentSelectedPartQuestionsID = ref<Array<string>>([]);
@@ -180,6 +189,19 @@ export default defineComponent({
           (question) => question.ID as string
         );
     };
+    const createListAnswerQuiz2 = () => {
+      currentListPartQuestion.value.forEach((part) => {
+        if (part.Type == "QUIZ2") {
+          part.Questions.forEach((questionData: Question) => {
+            if (questionData.Answers) {
+              questionData.Answers.forEach((answer) => {
+                answerListQuiz2.value = [...answerListQuiz2.value, answer];
+              });
+            }
+          });
+        }
+      });
+    };
     onMounted(() => {
       getBanks();
     });
@@ -191,6 +213,7 @@ export default defineComponent({
       currentListPartQuestion,
       currentQuestionPartSelected,
       currentSelectedPartQuestionsID,
+      answerListQuiz2,
       updateSelectQuestionFromBankStatus,
       getTagQuiz,
       toggleTag,

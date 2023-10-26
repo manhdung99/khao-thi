@@ -25,18 +25,19 @@
             <div class="text-sm font-bold">
               <span class="text-red-500">*</span> Tên ngân hàng câu hỏi
             </div>
-            <input class="input" type="text" />
+            <input v-model="currentbankName" class="input" type="text" />
           </div>
           <!-- Chưa có câu hỏi  -->
           <!-- <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div> -->
           <!-- Có câu hỏi  -->
           <div class="list-question mt-4 scroll-area">
             <questionVue
-              v-for="(question, index) in currentBankQuestions"
+              v-for="(question, index) in currentBankQuestionFilter"
               :key="question.ID"
               :questionPart="question"
               :index="index"
               :canEdit="true"
+              :answerListQuiz2="answerListQuiz2"
             />
           </div>
         </div>
@@ -56,6 +57,57 @@
             class="text-blue underline mt-4 cursor-pointer"
             >Xem thống kê</span
           >
+          <!-- Tuỳ chọn  -->
+          <div></div>
+          <div class="mt-6">
+            <p class="font-bold border-b border-black pb-2">Tuỳ chọn</p>
+            <div class="flex items-center">
+              <input class="w-4 h-4" type="checkbox" />
+              <span class="text-sm ml-2">Hiển thị chi tiết câu hỏi</span>
+            </div>
+            <div class="flex items-center mt-2">
+              <input class="w-4 h-4" type="checkbox" />
+              <span class="text-sm ml-2">Trắc nghiệm & tự luận</span>
+            </div>
+            <div class="flex items-center mt-2 ml-4">
+              <input class="w-4 h-4" type="checkbox" />
+              <span class="text-sm ml-2">Trắc nghiệm</span>
+            </div>
+            <div class="flex items-center mt-2 ml-4">
+              <input class="w-4 h-4" type="checkbox" />
+              <span class="text-sm ml-2">Tự luận</span>
+            </div>
+          </div>
+
+          <!-- Tên nội dung  -->
+          <div v-if="currentBankQuestions.length > 0" class="mt-4">
+            <p class="font-bold border-b border-black pb-2">Tên nội dung</p>
+            <div class="border-b py-2.5">
+              Tất cả ({{ currentBankQuestionFilter.length }})
+            </div>
+            <!-- Loop Nội dung  -->
+            <div>
+              <div class="border-b py-2.5">
+                1. Nhận biết ({{ basicQuestions.length }})
+              </div>
+              <!-- Loop đọc hiểu  -->
+              <div class="border-b py-2.5 pl-4">1.1 Điền từ (10)</div>
+              <div class="border-b py-2.5 pl-4">1.2 Điền từ (10)</div>
+            </div>
+            <div>
+              <div class="border-b py-2.5">
+                2. Thông hiểu({{ mediumQuestions.length }})
+              </div>
+              <!-- Loop đọc hiểu  -->
+              <div class="border-b py-2.5 pl-4">1.1 Điền từ (10)</div>
+              <div class="border-b py-2.5 pl-4">1.2 Điền từ (10)</div>
+            </div>
+            <div>
+              <div class="border-b py-2.5">
+                3. Vận dụng ({{ advanceQuestions.length }})
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -101,12 +153,16 @@ import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCours
 import SelectQuestionFromBank from "@/components/popup/selectQuestionFromBank.vue";
 import statisticsPopup from "@/components/popup/statisticsPopup.vue";
 import loadingIcon from "../assets/image/loading-gif.gif";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
 import { useQuestionBankStore } from "../stores/question-bank-store";
 import { usePopupStore } from "../stores/popup";
 import { useRoute } from "vue-router";
+import Answer from "@/components/type/answer";
+import Question from "@/components/type/question";
+import { nextTick } from "vue";
+import PartQuestion from "@/components/type/partQuestion";
 export default defineComponent({
   name: "QuestionBankVue",
   components: {
@@ -132,11 +188,47 @@ export default defineComponent({
     const { updateAddNewBankModalStatus } = usePopupStore();
     const { isLoading } = storeToRefs(usePopupStore());
     const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
-    const { currentBankQuestions } = storeToRefs(useQuestionBankStore());
+    const { currentBankQuestions, currentbankName } = storeToRefs(
+      useQuestionBankStore()
+    );
+    const currentBankQuestionFilter = ref<PartQuestion[]>([]);
     const route = useRoute();
-    onMounted(() => {
-      getCurrentBankQuestions(route.params.bankID as string);
+    const answerListQuiz2 = ref<Answer[]>([]);
+    const DesIndex = ref(0);
+    const basicQuestions = computed(() => {
+      return currentBankQuestionFilter.value.filter(
+        (question) => question.LevelPart == 1
+      );
     });
+    const mediumQuestions = computed(() => {
+      return currentBankQuestionFilter.value.filter(
+        (question) => question.LevelPart == 2
+      );
+    });
+    const advanceQuestions = computed(() => {
+      return currentBankQuestionFilter.value.filter(
+        (question) => question.LevelPart == 3
+      );
+    });
+    onMounted(async () => {
+      await getCurrentBankQuestions(route.params.bankID as string);
+      await createListAnswerQuiz2();
+      currentBankQuestionFilter.value = currentBankQuestions.value;
+    });
+    const createListAnswerQuiz2 = () => {
+      currentBankQuestions.value.forEach((part) => {
+        if (part.Type == "QUIZ2") {
+          part.Questions.forEach((questionData: Question) => {
+            if (questionData.Answers) {
+              questionData.Answers.forEach((answer) => {
+                answerListQuiz2.value = [...answerListQuiz2.value, answer];
+              });
+            }
+          });
+        }
+      });
+    };
+
     return {
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
@@ -149,6 +241,13 @@ export default defineComponent({
       openStatisticsBankModal,
       loadingIcon,
       isLoading,
+      answerListQuiz2,
+      currentBankQuestionFilter,
+      basicQuestions,
+      mediumQuestions,
+      advanceQuestions,
+      DesIndex,
+      currentbankName,
       updateAddNewBankModalStatus,
       deleteQuestion,
     };

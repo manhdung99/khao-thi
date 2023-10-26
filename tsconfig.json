@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "types": ["webpack-env", "jquery"],
     "paths": {
       "@/*": ["src/*"]
@@ -25,8 +25,11 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/**/*.ts", // Include your other TypeScript files
-    "src/shim-vue.d.ts" // Include your custom Vue type declaration
+    "src/shim-vue.d.ts",
+    "ckeditor/**/*.js", // Include CKEditor plugin files
+    "ckeditor/**/*.js", // Include your custom JavaScript files
+    "src/components/custom/test/ckeditor.js",
+    "src/components/custom/plugin.js"
   ],
   "exclude": ["node_modules"]
 }

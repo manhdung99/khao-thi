@@ -3,7 +3,7 @@
   <div v-if="partQuestionDetail" class="flex items-center ml-4 mt-4">
     <span
       v-html="partQuestionDetail.Title"
-      class="text-sm font-medium text-red-500 mr-5 max-w-1/3"
+      class="text-sm font-medium text-red-500 mr-5 w-1/3"
     >
     </span>
     <input
@@ -71,8 +71,8 @@ export default defineComponent({
       Media: null,
       Title: "",
       Type: "",
-      TypePart: 0,
-      LevelPart: 0,
+      TypePart: 1,
+      LevelPart: 1,
       Questions: [],
     });
     const { currentSelectedQuestion } = storeToRefs(useSelectQuestionStore());
@@ -110,7 +110,11 @@ export default defineComponent({
       );
     };
     onMounted(() => {
-      partQuestionDetail.value = props.question;
+      partQuestionDetail.value = {
+        ...props.question,
+        TypePart: 1,
+        LevelPart: 1,
+      };
       currentSelectedQuestionsID.value = currentSelectedQuestion.value.map(
         (question) => question.ID
       );

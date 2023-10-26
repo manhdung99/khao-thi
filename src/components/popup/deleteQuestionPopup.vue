@@ -47,8 +47,6 @@ export default defineComponent({
       useQuestionBankStore()
     );
     const handleDetele = (id: string) => {
-      console.log("here");
-
       if (deleteKey.value == "selectedQuestion") {
         deleteSelectedQuestion(id);
       } else if (deleteKey.value == "mainQuestion") {

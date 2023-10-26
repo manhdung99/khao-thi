@@ -41,7 +41,7 @@ export default defineComponent({
   setup() {
     const { updateDuplicateQuestionModalStatus } = usePopupStore();
     const { duplicateKey } = storeToRefs(usePopupStore());
-    const { deleteQuestion } = useQuestionBankStore();
+    const { duplicateQuestion } = useQuestionBankStore();
     const { duplicateSelectedQuestion } = useSelectQuestionStore();
     const { questionDuplicateID, questionDuplicateIndex } = storeToRefs(
       useQuestionBankStore()
@@ -50,14 +50,14 @@ export default defineComponent({
       if (duplicateKey.value == "selectedQuestion") {
         duplicateSelectedQuestion(id);
       } else if (duplicateKey.value == "mainQuestion") {
-        deleteQuestion(id);
+        duplicateQuestion(id);
       }
     };
     return {
       closeIcon,
       updateDuplicateQuestionModalStatus,
       duplicateSelectedQuestion,
-      deleteQuestion,
+      duplicateQuestion,
       handleDuplicate,
       questionDuplicateID,
       questionDuplicateIndex,

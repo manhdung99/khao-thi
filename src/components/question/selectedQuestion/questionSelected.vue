@@ -24,7 +24,9 @@
             ? "Điền từ"
             : question.Type == "QUIZ3"
             ? "Matching"
-            : "Chọn nhiều"
+            : question.Type == "QUIZ4"
+            ? "Chọn nhiều"
+            : "Tự luận"
         }}</span
       >
     </div>
@@ -33,18 +35,25 @@
       v-if="!showDetail"
       class="p-4 text-sm text-gray-600 flex justify-between"
     >
-      <span v-html="question.Title"></span>
+      <span v-if="question.Title || question.Description">
+        <span v-if="question.Title" v-html="question.Title"></span>
+        <span class="ellipsis" v-else v-html="question.Description"></span>
+      </span>
+      <span v-else v-html="question.Questions[0].Content"> </span>
       <div class="flex">
-        <span @click="showDetail = true" class="mr-2 cursor-pointer">
+        <span
+          @click="showDetail = true"
+          class="mr-2 cursor-pointer flex items-end"
+        >
           <img :src="eyeIcon" alt="" />
         </span>
         <span
           @click="
             questionDuplicateID = question.ID;
             questionDuplicateIndex = index as number;
-            updateDuplicateQuestionModalStatus(true, 'selectedQuestion');
+            updateDuplicateQuestionModalStatus(true, 'mainQuestion');
           "
-          class="mr-2 cursor-pointer"
+          class="mr-2 cursor-pointer flex items-end"
         >
           <img :src="duplicateIcon" alt="" />
         </span>
@@ -52,9 +61,9 @@
           @click="
             questionDeleteID = question.ID;
             questionDeleteIndex = index as number;
-            updateDeleteQuestionModalStatus(true, 'selectedQuestion');
+            updateDeleteQuestionModalStatus(true, 'mainQuestion');
           "
-          class="mr-2 cursor-pointer"
+          class="mr-2 cursor-pointer flex items-end"
         >
           <img :src="removeIcon" alt="" />
         </span>

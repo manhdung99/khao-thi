@@ -28,11 +28,11 @@
             <div class="w-full">
               <a-select
                 allowClear
-                v-model:value="option"
+                v-model:value="bankFilter"
                 show-search
                 placeholder="Tìm kiếm"
                 style="width: 100%"
-                :options="options"
+                :options="banksName"
               ></a-select>
             </div>
           </div>
@@ -40,11 +40,11 @@
             <div class="text-sm font-bold">Người tạo</div>
             <div>
               <a-select
-                v-model:value="option"
+                v-model:value="userFilter"
                 show-search
                 placeholder="Tìm kiếm"
                 style="width: 100%"
-                :options="options"
+                :options="users"
               ></a-select>
             </div>
           </div>
@@ -57,11 +57,11 @@
         </div>
       </div>
       <!-- Table  -->
-      <div v-if="bankList.length > 0" class="mt-4">
+      <div v-if="listBankQuestion.length > 0" class="mt-4">
         <a-table
           sticky
           :columns="columns"
-          :data-source="bankList"
+          :data-source="listBankQuestion"
           :scroll="{ x: 1500 }"
         >
           <template #bodyCell="{ column, record, index }">
@@ -83,10 +83,23 @@
             </template>
             <template v-if="column.key === 'Name'">
               <router-link :to="`/bank-detail/${record.ID}`">
-                <div class="flex text-blue">
+                <div
+                  @click="currentbankName = record.Name"
+                  class="flex text-blue"
+                >
                   {{ record.Name }}
                 </div>
               </router-link>
+            </template>
+            <template v-if="column.key === 'Created'">
+              <div class="flex">
+                {{ convertDate(record.Created) }}
+              </div>
+            </template>
+            <template v-if="column.key === 'Updated'">
+              <div class="flex">
+                {{ convertDate(record.Updated) }}
+              </div>
             </template>
           </template>
           <template #summary>
@@ -109,35 +122,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import plusIcon from "../assets/image/PlusCircleOutlined.svg";
 import duplicateIcon from "../assets/image/duplicateIcon.svg";
 import removeIcon from "../assets/image/removeIcon.svg";
 import loadingIcon from "../assets/image/loading-gif.gif";
-import type { SelectProps } from "ant-design-vue";
 import type { Dayjs } from "dayjs";
 import { useQuestionBankStore } from "../stores/question-bank-store";
-import { useSelectQuestionFromBank } from "../stores/question-select-from-bank";
 import type { TableColumnsType } from "ant-design-vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { usePopupStore } from "@/stores/popup";
+import { convertDate } from "../uses/convertData";
 export default defineComponent({
   name: "ListQuestionBank",
   setup() {
-    const options = ref<SelectProps["options"]>([
-      { value: "jack", label: "Jack" },
-      { value: "lucy", label: "Lucy" },
-      { value: "tom", label: "Tom" },
-    ]);
     const route = useRoute();
-    const { updateSubjectID } = useQuestionBankStore();
-    const { getBanks } = useSelectQuestionFromBank();
+    const { updateSubjectID, getBankArchive } = useQuestionBankStore();
     const { isLoading } = storeToRefs(usePopupStore());
-    const { bankList } = storeToRefs(useSelectQuestionFromBank());
-    const { questionBanks } = storeToRefs(useQuestionBankStore());
+    const { questionBanks, listBankQuestion, currentbankName } = storeToRefs(
+      useQuestionBankStore()
+    );
     type RangeValue = [Dayjs, Dayjs];
-    const option = ref();
+    const bankFilter = ref();
+    const userFilter = ref();
     const dateValue = ref<RangeValue>();
     const openFilter = ref(true);
     const columns = ref<TableColumnsType>([
@@ -186,31 +194,60 @@ export default defineComponent({
         width: 100,
       },
     ]);
+    const users = [
+      {
+        value: "User1",
+        name: "User1",
+      },
+      {
+        value: "User2",
+        name: "User2",
+      },
+    ];
     const duplicateBanks = (id: string) => {
       console.log(`duplicate${id}`);
     };
     const removeBanks = (id: string) => {
       console.log(`remove${id}`);
     };
+    const banksName = computed(() => {
+      if (listBankQuestion.value.length > 0) {
+        return listBankQuestion.value.map((bank) => {
+          return {
+            value: bank.Name,
+            label: bank.Name,
+          };
+        });
+      } else {
+        return [];
+      }
+    });
     onMounted(() => {
       updateSubjectID(route.params.subjectID as string);
-      getBanks();
+      getBankArchive();
+    });
+    watch(bankFilter, () => {
+      getBankArchive(bankFilter.value);
     });
     return {
       plusIcon,
-      option,
-      options,
       dateValue,
       openFilter,
       columns,
       questionBanks,
       removeIcon,
       duplicateIcon,
-      bankList,
+      listBankQuestion,
       loadingIcon,
       isLoading,
+      banksName,
+      userFilter,
+      bankFilter,
+      users,
+      currentbankName,
       duplicateBanks,
       removeBanks,
+      convertDate,
     };
   },
 });

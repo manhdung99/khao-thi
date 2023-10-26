@@ -16,6 +16,10 @@ declare module "*.gif" {
   const content: any;
   export default content;
 }
+declare module "*.js" {
+  const content: any;
+  export default content;
+}
 declare module "vue/types/vue" {
   interface Vue {
     $directive: {

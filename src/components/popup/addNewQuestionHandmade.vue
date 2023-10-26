@@ -54,14 +54,19 @@
           </div>
         </div>
         <!-- Text edit  -->
+
         <div>
-          <QuillEditor
+          <CKEditorCustom
+            :model-value="editorData"
+            @update:model-value="(newValue:any) => (editorData = newValue)"
+          />
+          <!-- <QuillEditor
             contentType="html"
             v-model:content="editerData"
             toolbar="full"
             ref="editor"
             theme="snow"
-          />
+          /> -->
           <div v-if="questionArray.length > 0" class="mt-4">
             <MultipleChoice
               v-for="(question, index) in questionArray"
@@ -103,10 +108,13 @@ import { storeToRefs } from "pinia";
 import MultipleChoice from "../questionType/MultipleChoice.vue";
 import Question from "../type/question";
 import Answer from "../type/answer";
+import CKEditorCustom from "../custom/CKEditorCustom.vue";
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export default defineComponent({
   name: "AddNewQuestionHandmade",
   components: {
     MultipleChoice,
+    CKEditorCustom,
   },
   setup() {
     const { updateAddNewQuestionHandmadeModalStatus } = usePopupStore();
@@ -114,8 +122,7 @@ export default defineComponent({
       useQuestionBankStore()
     );
     const { addQuestionToCurrentList } = useQuestionBankStore();
-    const editerData = ref("");
-    const editor = ref();
+    const editorData = ref("");
     const type = ref("QUIZ1");
     const level = ref("1");
     const title = ref("");
@@ -155,7 +162,7 @@ export default defineComponent({
       const data = {
         Type: type.value,
         ID: Math.random().toString(16).slice(2),
-        Description: editerData.value,
+        Description: editorData.value,
         Media: null,
         Title: title.value,
         Questions: questionArray.value,
@@ -181,12 +188,14 @@ export default defineComponent({
         question.Answers = answers;
       }
     };
+    const updateEditorData = (data: any) => {
+      editorData.value = data;
+    };
     return {
       closeIcon,
       questionDeleteID,
       questionDeleteIndex,
-      editerData,
-      editor,
+      editorData,
       editorOptions,
       questionArray,
       type,
@@ -199,6 +208,7 @@ export default defineComponent({
       addQuestionToList,
       updateQuestionContent,
       updateQuestionAnswer,
+      updateEditorData,
     };
   },
 });
@@ -232,3 +242,4 @@ export default defineComponent({
   height: 32px;
 }
 </style>
+../../cke

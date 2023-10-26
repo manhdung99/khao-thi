@@ -7,5 +7,6 @@ export default interface PartQuestion {
   Type: string;
   TypePart: number;
   LevelPart: number;
+  ParentID?: string;
   Questions: Array<any>;
 }
