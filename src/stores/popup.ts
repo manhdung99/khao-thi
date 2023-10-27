@@ -5,6 +5,8 @@ export const usePopupStore = defineStore("popupStore", {
     openAddNewBankModal: false,
     openStatisticsBankModal: false,
     openDeleteQuestionModal: false,
+    openDeleteBankModal: false,
+    openDuplicateBankModal: false,
     openDuplicateQuestionModal: false,
     openAddNewQuestionHandmadeModal: false,
     openSelectQuestionFromCourse: false,
@@ -21,6 +23,12 @@ export const usePopupStore = defineStore("popupStore", {
     updateDeleteQuestionModalStatus(status: boolean, key = "") {
       this.openDeleteQuestionModal = status;
       this.deleteKey = key;
+    },
+    updateDeleteBankModalStatus(status: boolean) {
+      this.openDeleteBankModal = status;
+    },
+    updateDuplicateBankModalStatus(status: boolean) {
+      this.openDuplicateBankModal = status;
     },
     updateDuplicateQuestionModalStatus(status: boolean, key = "") {
       this.openDuplicateQuestionModal = status;

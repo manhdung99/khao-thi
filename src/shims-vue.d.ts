@@ -27,3 +27,8 @@ declare module "vue/types/vue" {
     };
   }
 }
+declare global {
+  interface Window {
+    MathJax: any; // Replace 'any' with the actual type if known
+  }
+}

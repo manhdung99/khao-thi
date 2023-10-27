@@ -194,7 +194,9 @@ import { storeToRefs } from "pinia";
 import PartQuestion from "../type/partQuestion";
 import CKEditorCustom from "../custom/CKEditorCustom.vue";
 import { addStaticLink } from "../../uses/addStaticLink";
+import { changeMathJaxDes } from "../../uses/convertData";
 import Answer from "../type/answer";
+import mathjax from "../../uses/tex-mml-chtml.js";
 import Question from "../type/question";
 
 export default defineComponent({
@@ -248,6 +250,15 @@ export default defineComponent({
       question.value = JSON.parse(JSON.stringify(props.questionPart));
       if (question.value) {
         question.value.Description = addStaticLink(question.value.Description);
+        question.value.Description = changeMathJaxDes(
+          question.value.Description
+        );
+        question.value.Questions.forEach((questionDetail) => {
+          questionDetail.Content = changeMathJaxDes(questionDetail.Content);
+          questionDetail.Answers.forEach((answer: Answer) => {
+            answer.Content = changeMathJaxDes(answer.Content);
+          });
+        });
       }
     });
     onMounted(() => {
@@ -267,7 +278,20 @@ export default defineComponent({
     };
     const showDetail = ref(false);
     const isEdit = ref(false);
-
+    // onMounted(() => {
+    //   const ele = document.querySelector("#script-mathjax");
+    //   if (ele) {
+    //     console.log("loaded");
+    //   } else {
+    //     const script = document.createElement("script");
+    //     script.id = "script-mathjax";
+    //     script.type = "text/javascript";
+    //     script.async = true;
+    //     script.src =
+    //       "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML";
+    //     document.head.appendChild(script);
+    //   }
+    // });
     return {
       editIcon,
       duplicateIcon,

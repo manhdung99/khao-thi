@@ -71,12 +71,12 @@
             <template v-if="column.key === 'operation'">
               <div class="flex">
                 <span
-                  @click="duplicateBanks(record.ID)"
+                  @click="duplicateBanks(record)"
                   class="mr-2 cursor-pointer"
                 >
                   <img :src="duplicateIcon" alt="" />
                 </span>
-                <span @click="removeBanks(record.ID)" class="cursor-pointer">
+                <span @click="removeBanks(record)" class="cursor-pointer">
                   <img :src="removeIcon" alt="" />
                 </span>
               </div>
@@ -112,6 +112,18 @@
     </div>
   </div>
   <Teleport to="body">
+    <deleteBank
+      v-if="currentBankAction && openDeleteBankModal"
+      :bank="currentBankAction"
+    />
+  </Teleport>
+  <Teleport to="body">
+    <duplicateBank
+      v-if="currentBankAction && openDuplicateBankModal"
+      :bank="currentBankAction"
+    />
+  </Teleport>
+  <Teleport to="body">
     <div
       v-if="isLoading"
       class="fixed top-0 bottom-0 right-0 left-0 flex justify-center items-center bg-modal z-10"
@@ -134,12 +146,22 @@ import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { usePopupStore } from "@/stores/popup";
 import { convertDate } from "../uses/convertData";
+import deleteBank from "@/components/popup/deleteBank.vue";
+import duplicateBank from "@/components/popup/duplicateBank.vue";
+import Bank from "@/components/type/bank";
 export default defineComponent({
   name: "ListQuestionBank",
+  components: {
+    deleteBank,
+    duplicateBank,
+  },
   setup() {
     const route = useRoute();
     const { updateSubjectID, getBankArchive } = useQuestionBankStore();
-    const { isLoading } = storeToRefs(usePopupStore());
+    const { updateDeleteBankModalStatus, updateDuplicateBankModalStatus } =
+      usePopupStore();
+    const { isLoading, openDeleteBankModal, openDuplicateBankModal } =
+      storeToRefs(usePopupStore());
     const { questionBanks, listBankQuestion, currentbankName } = storeToRefs(
       useQuestionBankStore()
     );
@@ -204,11 +226,14 @@ export default defineComponent({
         name: "User2",
       },
     ];
-    const duplicateBanks = (id: string) => {
-      console.log(`duplicate${id}`);
+    const currentBankAction = ref();
+    const duplicateBanks = (bank: Bank) => {
+      currentBankAction.value = bank;
+      updateDuplicateBankModalStatus(true);
     };
-    const removeBanks = (id: string) => {
-      console.log(`remove${id}`);
+    const removeBanks = (bank: Bank) => {
+      currentBankAction.value = bank;
+      updateDeleteBankModalStatus(true);
     };
     const banksName = computed(() => {
       if (listBankQuestion.value.length > 0) {
@@ -245,6 +270,9 @@ export default defineComponent({
       bankFilter,
       users,
       currentbankName,
+      currentBankAction,
+      openDeleteBankModal,
+      openDuplicateBankModal,
       duplicateBanks,
       removeBanks,
       convertDate,

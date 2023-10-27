@@ -40,6 +40,20 @@
               :answerListQuiz2="answerListQuiz2"
             />
           </div>
+          <div
+            v-if="currentBankQuestionFilter.length > 0"
+            class="flex justify-center mt-4"
+          >
+            <a-pagination
+              v-model:current="currentPage"
+              :pageSize="pageSize"
+              :total="
+                pageLength > 0 ? pageLength : currentBankQuestionFilter.length
+              "
+              :pageSizeOptions="pageSizeOptions"
+              show-less-items
+            />
+          </div>
         </div>
         <!-- Action   -->
         <div class="flex flex-col top-4">
@@ -83,7 +97,7 @@
           <div v-if="currentBankQuestions.length > 0" class="mt-4">
             <p class="font-bold border-b border-black pb-2">Tên nội dung</p>
             <div class="border-b py-2.5">
-              Tất cả ({{ currentBankQuestionFilter.length }})
+              Tất cả ({{ currentBankQuestions.length }})
             </div>
             <!-- Loop Nội dung  -->
             <div>
@@ -105,6 +119,9 @@
             <div>
               <div class="border-b py-2.5">
                 3. Vận dụng ({{ advanceQuestions.length }})
+              </div>
+              <div class="border-b py-2.5">
+                4. Vận dụng cao ({{ hardQuestions.length }})
               </div>
             </div>
           </div>
@@ -144,6 +161,11 @@
 </template>
 
 <script lang="ts">
+declare global {
+  interface Window {
+    MathJax: any;
+  }
+}
 import questionVue from "../components/question/question.vue";
 import AddNewPopup from "../components/popup/addNewPopup.vue";
 import deletePopup from "../components/popup/deleteQuestionPopup.vue";
@@ -153,7 +175,7 @@ import selectQuestionFromCourse from "@/components/popup/selectQuestionFromCours
 import SelectQuestionFromBank from "@/components/popup/selectQuestionFromBank.vue";
 import statisticsPopup from "@/components/popup/statisticsPopup.vue";
 import loadingIcon from "../assets/image/loading-gif.gif";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import leftIcon from "../assets/image/ArrowLeft.svg";
 import { useQuestionBankStore } from "../stores/question-bank-store";
@@ -195,40 +217,88 @@ export default defineComponent({
     const route = useRoute();
     const answerListQuiz2 = ref<Answer[]>([]);
     const DesIndex = ref(0);
+    const currentPage = ref(1);
+    const pageSize = ref(5);
+    const pageSizeOptions = [5, 10, 20, 50];
+    const pageLength = ref(0);
     const basicQuestions = computed(() => {
-      return currentBankQuestionFilter.value.filter(
+      return currentBankQuestions.value.filter(
         (question) => question.LevelPart == 1
       );
     });
     const mediumQuestions = computed(() => {
-      return currentBankQuestionFilter.value.filter(
+      return currentBankQuestions.value.filter(
         (question) => question.LevelPart == 2
       );
     });
     const advanceQuestions = computed(() => {
-      return currentBankQuestionFilter.value.filter(
+      return currentBankQuestions.value.filter(
         (question) => question.LevelPart == 3
       );
     });
+    const hardQuestions = computed(() => {
+      return currentBankQuestions.value.filter(
+        (question) => question.LevelPart == 4
+      );
+    });
+
+    const createListAnswerQuiz2 = () => {
+      if (currentBankQuestionFilter.value.length > 0) {
+        currentBankQuestionFilter.value.forEach((part) => {
+          if (part.Type == "QUIZ2") {
+            part.Questions.forEach((questionData: Question) => {
+              if (questionData.Answers) {
+                questionData.Answers.forEach((answer) => {
+                  answerListQuiz2.value = [...answerListQuiz2.value, answer];
+                });
+              }
+            });
+          }
+        });
+      }
+    };
+    const loadMathJax = () => {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML";
+      document.head.appendChild(script);
+
+      // You may want to add a callback to ensure MathJax is loaded before rendering MathML content.
+      script.onload = () => {
+        // Render MathML content with MathJax.
+        if (window.MathJax) {
+          window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
+        }
+      };
+    };
+    const handleContentChange = () => {
+      // Load MathJax for the new content
+      loadMathJax();
+    };
     onMounted(async () => {
       await getCurrentBankQuestions(route.params.bankID as string);
-      await createListAnswerQuiz2();
-      currentBankQuestionFilter.value = currentBankQuestions.value;
     });
-    const createListAnswerQuiz2 = () => {
-      currentBankQuestions.value.forEach((part) => {
-        if (part.Type == "QUIZ2") {
-          part.Questions.forEach((questionData: Question) => {
-            if (questionData.Answers) {
-              questionData.Answers.forEach((answer) => {
-                answerListQuiz2.value = [...answerListQuiz2.value, answer];
-              });
-            }
-          });
-        }
-      });
-    };
-
+    watch([currentBankQuestions, currentPage], async () => {
+      currentBankQuestionFilter.value = currentBankQuestions.value;
+      pageLength.value = currentBankQuestionFilter.value.length;
+      if (
+        currentPage.value * pageSize.value >
+        currentBankQuestions.value.length
+      ) {
+        currentBankQuestionFilter.value = currentBankQuestionFilter.value.slice(
+          (currentPage.value - 1) * pageSize.value
+        );
+      } else {
+        currentBankQuestionFilter.value = currentBankQuestionFilter.value.slice(
+          (currentPage.value - 1) * pageSize.value,
+          currentPage.value * pageSize.value
+        );
+      }
+      await createListAnswerQuiz2();
+      await handleContentChange();
+    });
     return {
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
@@ -246,8 +316,13 @@ export default defineComponent({
       basicQuestions,
       mediumQuestions,
       advanceQuestions,
+      hardQuestions,
       DesIndex,
       currentbankName,
+      currentPage,
+      pageSize,
+      pageLength,
+      pageSizeOptions,
       updateAddNewBankModalStatus,
       deleteQuestion,
     };
@@ -264,6 +339,6 @@ export default defineComponent({
   min-height: 50px;
 }
 .question-bank-detail .list-question {
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 250px);
 }
 </style>

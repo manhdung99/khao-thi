@@ -20,3 +20,10 @@ export const convertDate = (isoDate: string) => {
   // Create the "YYYY-MM-DD" formatted string
   return `${year}-${month}-${day}`;
 };
+export const changeMathJaxDes = (des: string) => {
+  if (des != null) {
+    des = des.replaceAll("mml:", "");
+    des = des.replaceAll(":mml", "");
+  }
+  return des;
+};

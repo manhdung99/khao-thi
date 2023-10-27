@@ -45,6 +45,19 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
 
       popup.isLoading = false;
     },
+    duplicateBank(bank: Bank) {
+      const newID = generateRandomHexId();
+      const newBank = {
+        ...bank,
+        ID: newID,
+      } as Bank;
+      this.listBankQuestion = [newBank, ...this.listBankQuestion];
+    },
+    deleteBank(bank: Bank) {
+      this.listBankQuestion = this.listBankQuestion.filter((data) => {
+        data.ID == bank.ID;
+      });
+    },
     async getCurrentBankQuestions(id: string, searchText = "", LevelPart = "") {
       const popUp = usePopupStore();
       popUp.isLoading = true;

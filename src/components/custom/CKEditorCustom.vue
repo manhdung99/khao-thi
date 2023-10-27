@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="border">
     <ckeditor
       :editor="editor"
       v-model="localEditorData"
@@ -10,13 +10,16 @@
 </template>
 
 <script lang="ts">
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { defineComponent, ref } from "vue";
+import Editor from "../../../ckeditor5";
+import { defineComponent, ref, onMounted } from "vue";
 import { uploadImage } from "../../uses/function";
 export default defineComponent({
   name: "CKEditorCustom",
   props: {
-    modelValue: String,
+    modelValue: {
+      type: String,
+      required: true,
+    },
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
@@ -29,14 +32,16 @@ export default defineComponent({
         return uploadImage(loader);
       };
     }
-    const editor = ClassicEditor;
+    const editor = Editor;
     const editorConfig = {
       extraPlugins: [uploader],
       mediaEmbed: {
         previewsInData: true,
       },
     };
-
+    onMounted(() => {
+      localEditorData.value = props.modelValue;
+    });
     return {
       localEditorData,
       editor,

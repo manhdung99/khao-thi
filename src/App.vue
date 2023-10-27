@@ -10,3 +10,15 @@ body {
   min-height: 100vh;
 }
 </style>
+<script lang="ts">
+export default {
+  setup() {
+    const recaptchaScript = document.createElement("script");
+    recaptchaScript.setAttribute(
+      "src",
+      "https://static.eduso.vn//lib/mathjax/es5/tex-mml-chtml.js"
+    );
+    document.head.appendChild(recaptchaScript);
+  },
+};
+</script>
