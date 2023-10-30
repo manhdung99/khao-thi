@@ -7,7 +7,10 @@
         <div class="font-semibold text-xl">Ngân hàng câu hỏi</div>
         <div>
           <router-link :to="`/bank-detail/`">
-            <button class="btn bg-blue text-white font-light flex items-center">
+            <button
+              @click="currentbankName = ''"
+              class="btn bg-blue text-white font-light flex items-center"
+            >
               <span class="mr-2"><img :src="plusIcon" alt="" /></span>
               Tạo mới
             </button>

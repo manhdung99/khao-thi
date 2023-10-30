@@ -34,6 +34,9 @@ export default {
           lighter: "#f5f5f5",
           DEFAULT: "#00000073",
         },
+        gray: {
+          DEFAULT: "#cccccccc",
+        },
         modal: {
           DEFAULT: "#8c8c8c33",
           darker: "#00000080",

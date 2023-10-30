@@ -13,9 +13,9 @@
         <div class="my-4">
           <select v-model="type" class="w-full input" name="" id="">
             <option value="QUIZ1">QUIZ1 : Chọn 1 đáp án đúng</option>
-            <option value="QUIZ2">QUIZ2 : Chọn 1 đáp án đúng</option>
-            <option value="QUIZ3">QUIZ3 : Chọn 1 đáp án đúng</option>
-            <option value="QUIZ4">QUIZ4 : Chọn 1 đáp án đúng</option>
+            <option value="QUIZ2">QUIZ2 : Điền từ</option>
+            <option value="QUIZ3">QUIZ3 : Matching</option>
+            <option value="QUIZ4">QUIZ4 : Chọn nhiều đáp án</option>
           </select>
         </div>
         <!-- Loại câu hỏi và mức độ  -->
@@ -24,8 +24,8 @@
             <div class="text-indigo font-semibold mb-2">Loại câu hỏi</div>
             <div>
               <select v-model="questionType" class="input w-full" name="" id="">
-                <option value="0">Lý thuyết</option>
-                <option value="1">Bài tập</option>
+                <option value="1">Lý thuyết</option>
+                <option value="2">Bài tập</option>
               </select>
             </div>
           </div>
@@ -33,9 +33,10 @@
             <div class="text-indigo font-semibold mb-2">Mức độ</div>
             <div>
               <select v-model="level" class="input w-full" name="" id="">
-                <option value="0">Nhận biết</option>
-                <option value="1">Thông hiểu</option>
-                <option value="2">Vận dụng cao</option>
+                <option value="1">Nhận biết</option>
+                <option value="2">Thông hiểu</option>
+                <option value="3">Vận dụng</option>
+                <option value="4">Vận dụng cao</option>
               </select>
             </div>
           </div>
@@ -56,6 +57,7 @@
         <!-- Text edit  -->
 
         <div>
+          <div class="text-indigo font-semibold mb-2">Nội dung câu hỏi</div>
           <CKEditorCustom
             :model-value="editorData"
             @update:model-value="(newValue:any) => (editorData = newValue)"
@@ -79,7 +81,7 @@
             />
           </div>
         </div>
-        <div class="flex my-4">
+        <div v-if="type != 'QUIZ2'" class="flex my-4">
           <button @click="addNewQuestion" class="mr-2 btn btn-blue">
             Thêm câu hỏi
           </button>
@@ -126,7 +128,7 @@ export default defineComponent({
     const type = ref("QUIZ1");
     const level = ref("1");
     const title = ref("");
-    const questionType = ref("0");
+    const questionType = ref("1");
     const questionArray = ref<Question[]>([]);
     const addNewQuestion = () => {
       const id = "id" + Math.random().toString(16).slice(2);
@@ -149,6 +151,7 @@ export default defineComponent({
         (question) => question.ID != id
       );
     };
+
     const editorOptions = {
       // Quill options here
       modules: {

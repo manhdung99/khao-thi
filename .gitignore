@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 /dist
-ckeditor5
 
 # local env files
 .env.local

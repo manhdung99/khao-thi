@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <div class="page-body p-6 relative">
+    <div class="page-body p-6 relative pb-0">
       <div class="flex justify-between">
         <!-- Question  -->
         <div class="flex-1 mr-9">
@@ -96,32 +96,48 @@
           <!-- Tên nội dung  -->
           <div v-if="currentBankQuestions.length > 0" class="mt-4">
             <p class="font-bold border-b border-black pb-2">Tên nội dung</p>
-            <div class="border-b py-2.5">
+            <div
+              @click="handleUpdateFilterQuestions(currentBankQuestions, '')"
+              class="border-b py-2.5 cursor-pointer"
+              :class="filterKey == '' ? 'bg-gray' : ''"
+            >
               Tất cả ({{ currentBankQuestions.length }})
             </div>
-            <!-- Loop Nội dung  -->
-            <div>
-              <div class="border-b py-2.5">
-                1. Nhận biết ({{ basicQuestions.length }})
-              </div>
-              <!-- Loop đọc hiểu  -->
-              <div class="border-b py-2.5 pl-4">1.1 Điền từ (10)</div>
-              <div class="border-b py-2.5 pl-4">1.2 Điền từ (10)</div>
-            </div>
-            <div>
-              <div class="border-b py-2.5">
-                2. Thông hiểu({{ mediumQuestions.length }})
-              </div>
-              <!-- Loop đọc hiểu  -->
-              <div class="border-b py-2.5 pl-4">1.1 Điền từ (10)</div>
-              <div class="border-b py-2.5 pl-4">1.2 Điền từ (10)</div>
-            </div>
-            <div>
-              <div class="border-b py-2.5">
-                3. Vận dụng ({{ advanceQuestions.length }})
-              </div>
-              <div class="border-b py-2.5">
-                4. Vận dụng cao ({{ hardQuestions.length }})
+            <div class="filter-list scroll" v-if="filterArray.length > 0">
+              <div
+                v-for="(levelQuestion, index) in filterArray"
+                :key="levelQuestion.id"
+              >
+                <div
+                  v-if="levelQuestion.levelQuestions?.length > 0"
+                  class="border-b py-2.5 cursor-pointer"
+                  :class="filterKey == levelQuestion.id ? 'bg-gray' : ''"
+                  @click="
+                    handleUpdateFilterQuestions(
+                      levelQuestion.levelQuestions,
+                      levelQuestion.id
+                    )
+                  "
+                >
+                  {{ index + 1 }}. {{ levelQuestion.name }} ({{
+                    levelQuestion.levelQuestions.length
+                  }})
+                </div>
+
+                <div
+                  v-for="(type, dataIndex) in levelQuestion.typeQuestions"
+                  :key="type.id"
+                  :class="[
+                    type.data.length > 0 ? '' : 'hidden',
+                    filterKey == type.id ? 'bg-gray' : '',
+                  ]"
+                  class="border-b py-2.5 pl-4 cursor-pointer"
+                  @click="handleUpdateFilterQuestions(type.data, type.id)"
+                >
+                  {{ index + 1 }}.{{ dataIndex + 1 }} {{ type.name }} ({{
+                    type.data.length
+                  }})
+                </div>
               </div>
             </div>
           </div>
@@ -221,27 +237,9 @@ export default defineComponent({
     const pageSize = ref(5);
     const pageSizeOptions = [5, 10, 20, 50];
     const pageLength = ref(0);
-    const basicQuestions = computed(() => {
-      return currentBankQuestions.value.filter(
-        (question) => question.LevelPart == 1
-      );
-    });
-    const mediumQuestions = computed(() => {
-      return currentBankQuestions.value.filter(
-        (question) => question.LevelPart == 2
-      );
-    });
-    const advanceQuestions = computed(() => {
-      return currentBankQuestions.value.filter(
-        (question) => question.LevelPart == 3
-      );
-    });
-    const hardQuestions = computed(() => {
-      return currentBankQuestions.value.filter(
-        (question) => question.LevelPart == 4
-      );
-    });
-
+    const continuousIndex = ref(0);
+    const filterArray = ref();
+    const filterKey = ref("");
     const createListAnswerQuiz2 = () => {
       if (currentBankQuestionFilter.value.length > 0) {
         currentBankQuestionFilter.value.forEach((part) => {
@@ -273,6 +271,27 @@ export default defineComponent({
         }
       };
     };
+    const basicQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.LevelPart === 1)
+    );
+    const mediumQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.LevelPart === 2)
+    );
+    const advanceQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.LevelPart === 3)
+    );
+    const hardQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.LevelPart === 4)
+    );
+    const getQuestionsByType = (questions: PartQuestion[], type: string) => {
+      return questions.filter((question) => question.Type === type);
+    };
+    const handleUpdateFilterQuestions = (data: PartQuestion[], key: string) => {
+      filterKey.value = key;
+      currentBankQuestionFilter.value = data;
+      pageLength.value = currentBankQuestionFilter.value.length;
+      caculatorData(1);
+    };
     const handleContentChange = () => {
       // Load MathJax for the new content
       loadMathJax();
@@ -280,25 +299,170 @@ export default defineComponent({
     onMounted(async () => {
       await getCurrentBankQuestions(route.params.bankID as string);
     });
-    watch([currentBankQuestions, currentPage], async () => {
-      currentBankQuestionFilter.value = currentBankQuestions.value;
-      pageLength.value = currentBankQuestionFilter.value.length;
-      if (
-        currentPage.value * pageSize.value >
-        currentBankQuestions.value.length
-      ) {
+    const caculatorData = (currentPage: number) => {
+      if (currentPage * pageSize.value > currentBankQuestions.value.length) {
         currentBankQuestionFilter.value = currentBankQuestionFilter.value.slice(
-          (currentPage.value - 1) * pageSize.value
+          (currentPage - 1) * pageSize.value
         );
       } else {
         currentBankQuestionFilter.value = currentBankQuestionFilter.value.slice(
-          (currentPage.value - 1) * pageSize.value,
-          currentPage.value * pageSize.value
+          (currentPage - 1) * pageSize.value,
+          currentPage * pageSize.value
         );
       }
+    };
+    //Change bank
+    watch([currentBankQuestions, currentPage], async () => {
+      currentBankQuestionFilter.value = currentBankQuestions.value;
+      pageLength.value = currentBankQuestionFilter.value.length;
+      caculatorData(currentPage.value);
       await createListAnswerQuiz2();
       await handleContentChange();
     });
+    watch(currentBankQuestions, () => {
+      filterArray.value = [
+        {
+          id: "Level1",
+          levelQuestions: basicQuestions.value,
+          name: "Nhận biết",
+          typeQuestions: [
+            {
+              id: "Level1-QUIZ1",
+              name: "Chọn một",
+              data: getQuestionsByType(basicQuestions.value, "QUIZ1"),
+            },
+            {
+              id: "Level1-QUIZ2",
+              name: "Điền từ",
+              data: getQuestionsByType(basicQuestions.value, "QUIZ2"),
+            },
+            {
+              id: "Level1-QUIZ3",
+              name: "Matching",
+              data: getQuestionsByType(basicQuestions.value, "QUIZ3"),
+            },
+            {
+              id: "Level1-QUIZ4",
+              name: "Chọn nhiều",
+              data: getQuestionsByType(basicQuestions.value, "QUIZ4"),
+            },
+            {
+              id: "Level1-ESSAY",
+              name: "Tự luận",
+              data: getQuestionsByType(basicQuestions.value, "ESSAY"),
+            },
+          ],
+        },
+        {
+          id: "Level2",
+          levelQuestions: mediumQuestions.value,
+          name: "Thông hiểu",
+          typeQuestions: [
+            {
+              id: "Level2-QUIZ1",
+              name: "Chọn một",
+              data: getQuestionsByType(mediumQuestions.value, "QUIZ1"),
+            },
+            {
+              id: "Level2-QUIZ2",
+              name: "Điền từ",
+              data: getQuestionsByType(mediumQuestions.value, "QUIZ2"),
+            },
+            {
+              id: "Level2-QUIZ3",
+              name: "Matching",
+              data: getQuestionsByType(mediumQuestions.value, "QUIZ3"),
+            },
+            {
+              id: "Level2-QUIZ4",
+              name: "Chọn nhiều",
+              data: getQuestionsByType(mediumQuestions.value, "QUIZ4"),
+            },
+            {
+              id: "Level2-ESSAY",
+              name: "Tự luận",
+              data: getQuestionsByType(mediumQuestions.value, "ESSAY"),
+            },
+          ],
+        },
+        {
+          id: "Level3",
+          levelQuestions: advanceQuestions.value,
+          name: "Vận dụng",
+          typeQuestions: [
+            {
+              id: "Level3-QUIZ1",
+              name: "Chọn một",
+              data: getQuestionsByType(advanceQuestions.value, "QUIZ1"),
+            },
+            {
+              id: "Level3-QUIZ2",
+              name: "Điền từ",
+              data: getQuestionsByType(advanceQuestions.value, "QUIZ2"),
+            },
+            {
+              id: "Level3-QUIZ3",
+              name: "Matching",
+              data: getQuestionsByType(advanceQuestions.value, "QUIZ3"),
+            },
+            {
+              id: "Level3-QUIZ4",
+              name: "Chọn nhiều",
+              data: getQuestionsByType(advanceQuestions.value, "QUIZ4"),
+            },
+            {
+              id: "Level3-ESSAY",
+              name: "Tự luận",
+              data: getQuestionsByType(advanceQuestions.value, "ESSAY"),
+            },
+          ],
+        },
+        {
+          id: "Level4",
+          levelQuestions: hardQuestions.value,
+          name: "Vận dụng cao",
+          typeQuestions: [
+            {
+              id: "Level4-QUIZ1",
+              name: "Chọn một",
+              data: getQuestionsByType(hardQuestions.value, "QUIZ1"),
+            },
+            {
+              id: "Level4-QUIZ2",
+              name: "Điền từ",
+              data: getQuestionsByType(hardQuestions.value, "QUIZ2"),
+            },
+            {
+              id: "Level4-QUIZ3",
+              name: "Matching",
+              data: getQuestionsByType(hardQuestions.value, "QUIZ3"),
+            },
+            {
+              id: "Level4-QUIZ4",
+              name: "Chọn nhiều",
+              data: getQuestionsByType(hardQuestions.value, "QUIZ4"),
+            },
+            {
+              id: "Level4-ESSAY",
+              name: "Tự luận",
+              data: getQuestionsByType(hardQuestions.value, "ESSAY"),
+            },
+          ],
+        },
+      ];
+      filterArray.value = filterArray.value.map((filterQuestion: any) => {
+        filterQuestion.typeQuestions = filterQuestion.typeQuestions.filter(
+          (question: any) => {
+            return question.data.length > 0;
+          }
+        );
+        return filterQuestion;
+      });
+      filterArray.value = filterArray.value.filter(
+        (filterQuestion: any) => filterQuestion.levelQuestions.length > 0
+      );
+    });
+
     return {
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
@@ -323,8 +487,12 @@ export default defineComponent({
       pageSize,
       pageLength,
       pageSizeOptions,
+      filterArray,
+      continuousIndex,
+      filterKey,
       updateAddNewBankModalStatus,
       deleteQuestion,
+      handleUpdateFilterQuestions,
     };
   },
 });
@@ -340,5 +508,8 @@ export default defineComponent({
 }
 .question-bank-detail .list-question {
   max-height: calc(100vh - 250px);
+}
+.filter-list {
+  max-height: calc(100vh - 550px);
 }
 </style>
