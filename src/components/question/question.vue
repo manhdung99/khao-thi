@@ -1,6 +1,16 @@
 <template>
   <!-- Default  -->
-  <div v-if="question" class="bg-white rounded-md question-detail mb-4">
+  <div
+    v-if="question"
+    :class="question.validateError ? 'border-red-500 border' : ''"
+    class="bg-white rounded-md question-detail mb-4 relative"
+  >
+    <div
+      :class="question.validateError ? '' : 'hidden'"
+      class="absolute text-red-500 left-1/2 top-2 text-sm"
+    >
+      Câu hỏi lỗi
+    </div>
     <div
       class="p-3 flex items-center justify-between border-b border-grey-lighter"
     >
@@ -273,25 +283,11 @@ export default defineComponent({
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i] as HTMLInputElement;
         const answers = props.answerListQuiz2 as Answer[];
-        element.placeholder = answers[i].Content;
+        element.placeholder = answers[i]?.Content;
       }
     };
     const showDetail = ref(false);
     const isEdit = ref(false);
-    // onMounted(() => {
-    //   const ele = document.querySelector("#script-mathjax");
-    //   if (ele) {
-    //     console.log("loaded");
-    //   } else {
-    //     const script = document.createElement("script");
-    //     script.id = "script-mathjax";
-    //     script.type = "text/javascript";
-    //     script.async = true;
-    //     script.src =
-    //       "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML";
-    //     document.head.appendChild(script);
-    //   }
-    // });
     return {
       editIcon,
       duplicateIcon,

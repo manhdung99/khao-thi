@@ -9,4 +9,5 @@ export default interface PartQuestion {
   LevelPart: number;
   ParentID?: string;
   Questions: Array<any>;
+  validateError?: boolean;
 }

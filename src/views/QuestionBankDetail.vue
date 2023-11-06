@@ -6,7 +6,9 @@
       <div class="flex justify-between items-center">
         <div class="font-semibold text-xl flex items-center">
           <router-link class="flex" to="/">
-            <span class="cursor-pointer mr-4"
+            <span
+              @click="getCurrentBankQuestions('')"
+              class="cursor-pointer mr-4"
               ><img :src="leftIcon" alt=""
             /></span>
           </router-link>
@@ -21,11 +23,18 @@
       <div class="flex justify-between">
         <!-- Question  -->
         <div class="flex-1 mr-9">
-          <div>
-            <div class="text-sm font-bold">
-              <span class="text-red-500">*</span> Tên ngân hàng câu hỏi
+          <div class="flex justify-between">
+            <div>
+              <div class="text-sm font-bold">
+                <span class="text-red-500">*</span> Tên ngân hàng câu hỏi
+              </div>
+              <input v-model="currentbankName" class="input" type="text" />
             </div>
-            <input v-model="currentbankName" class="input" type="text" />
+            <div class="">
+              <button @click="validatelistQuestion" class="btn btn-primary">
+                Kiểm tra lỗi
+              </button>
+            </div>
           </div>
           <!-- Chưa có câu hỏi  -->
           <!-- <div class="mt-4">Chọn "Thêm câu hỏi" để tạo ngân hàng câu hỏi</div> -->
@@ -45,8 +54,9 @@
             class="flex justify-center mt-4"
           >
             <a-pagination
+              @show-size-change="handlePageSizeChange"
               v-model:current="currentPage"
-              :pageSize="pageSize"
+              :defaultPageSize="pageSize"
               :total="
                 pageLength > 0 ? pageLength : currentBankQuestionFilter.length
               "
@@ -197,6 +207,7 @@ import leftIcon from "../assets/image/ArrowLeft.svg";
 import { useQuestionBankStore } from "../stores/question-bank-store";
 import { usePopupStore } from "../stores/popup";
 import { useRoute } from "vue-router";
+import { validateQuestion } from "../uses/function";
 import Answer from "@/components/type/answer";
 import Question from "@/components/type/question";
 import { nextTick } from "vue";
@@ -223,12 +234,10 @@ export default defineComponent({
       openSelectQuestionFromBank,
       openStatisticsBankModal,
     } = storeToRefs(usePopupStore());
-    const { updateAddNewBankModalStatus } = usePopupStore();
+    const { updateAddNewBankModalStatus, updateLoading } = usePopupStore();
     const { isLoading } = storeToRefs(usePopupStore());
     const { getCurrentBankQuestions, deleteQuestion } = useQuestionBankStore();
-    const { currentBankQuestions, currentbankName } = storeToRefs(
-      useQuestionBankStore()
-    );
+    const { currentBankQuestions } = storeToRefs(useQuestionBankStore());
     const currentBankQuestionFilter = ref<PartQuestion[]>([]);
     const route = useRoute();
     const answerListQuiz2 = ref<Answer[]>([]);
@@ -240,6 +249,7 @@ export default defineComponent({
     const continuousIndex = ref(0);
     const filterArray = ref();
     const filterKey = ref("");
+    const currentbankName = ref("");
     const createListAnswerQuiz2 = () => {
       if (currentBankQuestionFilter.value.length > 0) {
         currentBankQuestionFilter.value.forEach((part) => {
@@ -298,6 +308,10 @@ export default defineComponent({
     };
     onMounted(async () => {
       await getCurrentBankQuestions(route.params.bankID as string);
+      const bankName = localStorage.getItem("bankName");
+      if (bankName) {
+        currentbankName.value = bankName;
+      }
     });
     const caculatorData = (currentPage: number) => {
       if (currentPage * pageSize.value > currentBankQuestions.value.length) {
@@ -310,6 +324,16 @@ export default defineComponent({
           currentPage * pageSize.value
         );
       }
+    };
+    //Change page size
+    const handlePageSizeChange = (current: any, size: any) => {
+      console.log(`Page size changed to ${size}`);
+      // You can perform any actions here when the page size changes
+      pageSize.value = size; // Update the pageSize data property if needed
+    };
+    const validatelistQuestion = async () => {
+      const data = await validateQuestion(currentBankQuestions.value);
+      currentBankQuestions.value = data;
     };
     //Change bank
     watch([currentBankQuestions, currentPage], async () => {
@@ -490,9 +514,13 @@ export default defineComponent({
       filterArray,
       continuousIndex,
       filterKey,
+      validateQuestion,
+      handlePageSizeChange,
       updateAddNewBankModalStatus,
       deleteQuestion,
       handleUpdateFilterQuestions,
+      getCurrentBankQuestions,
+      validatelistQuestion,
     };
   },
 });

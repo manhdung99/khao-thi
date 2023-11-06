@@ -61,7 +61,7 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
     async getCurrentBankQuestions(id: string, searchText = "", LevelPart = "") {
       const popUp = usePopupStore();
       popUp.isLoading = true;
-      if (id) {
+      if (id && id.length > 0) {
         const url =
           "https://alpha.eduso.vn/eduso/teacher/ExamManage/GetListPart";
         const params = new FormData();
@@ -110,6 +110,9 @@ export const useQuestionBankStore = defineStore("questionBankStore", {
     },
     updateSubjectID(id: string) {
       this.subjectID = id;
+    },
+    updateBankName(text: string) {
+      localStorage.setItem("bankName", text);
     },
   },
 });

@@ -46,5 +46,8 @@ export const usePopupStore = defineStore("popupStore", {
     updateStatisticsBankModalStatus(status: boolean) {
       this.openStatisticsBankModal = status;
     },
+    updateLoading(status: boolean) {
+      this.isLoading = status;
+    },
   },
 });

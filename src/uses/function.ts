@@ -1,3 +1,5 @@
+import PartQuestion from "@/components/type/partQuestion";
+import Question from "@/components/type/question";
 import axios, { AxiosResponse } from "axios";
 export function uploadImage(loader: any) {
   return {
@@ -49,4 +51,48 @@ export function generateRandomHexId() {
     result += characters[Math.floor(Math.random() * characters.length)];
   }
   return result;
+}
+export async function validateQuestion(partQuestions: PartQuestion[]) {
+  partQuestions = partQuestions.map((part, partIndex) => {
+    if (part.Type == "QUIZ1" || part.Type == "QUIZ4") {
+      if (part.Questions.length > 0) {
+        part.Questions.forEach((question: Question, index) => {
+          if (question.Answers && question.Answers.length == 0) {
+            part = { ...part, validateError: true };
+          } else {
+            part = { ...part, validateError: true };
+            let trueAnswerTime = 0;
+            question.Answers?.forEach((answer) => {
+              if (answer.IsCorrect) {
+                if (part.Type == "QUIZ4") {
+                  part = { ...part, validateError: false };
+                } else {
+                  part = { ...part, validateError: false };
+                  trueAnswerTime = trueAnswerTime + 1;
+                  if (trueAnswerTime > 1) {
+                    part = { ...part, validateError: true };
+                  }
+                }
+              }
+            });
+          }
+        });
+      } else {
+        part = { ...part, validateError: true };
+        partQuestions = [part, ...partQuestions];
+      }
+    }
+    return part;
+  });
+  partQuestions = partQuestions.sort((a, b) => {
+    if (a.validateError === b.validateError) {
+      return 0;
+    } else if (a.validateError) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+  alert("Đã kiểm tra lỗi xong");
+  return partQuestions;
 }

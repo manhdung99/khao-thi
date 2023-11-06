@@ -8,7 +8,7 @@
         <div>
           <router-link :to="`/bank-detail/`">
             <button
-              @click="currentbankName = ''"
+              @click="updateBankName('')"
               class="btn bg-blue text-white font-light flex items-center"
             >
               <span class="mr-2"><img :src="plusIcon" alt="" /></span>
@@ -87,7 +87,7 @@
             <template v-if="column.key === 'Name'">
               <router-link :to="`/bank-detail/${record.ID}`">
                 <div
-                  @click="currentbankName = record.Name"
+                  @click="updateBankName(record.Name)"
                   class="flex text-blue"
                 >
                   {{ record.Name }}
@@ -160,12 +160,13 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
-    const { updateSubjectID, getBankArchive } = useQuestionBankStore();
+    const { updateSubjectID, getBankArchive, updateBankName } =
+      useQuestionBankStore();
     const { updateDeleteBankModalStatus, updateDuplicateBankModalStatus } =
       usePopupStore();
     const { isLoading, openDeleteBankModal, openDuplicateBankModal } =
       storeToRefs(usePopupStore());
-    const { questionBanks, listBankQuestion, currentbankName } = storeToRefs(
+    const { questionBanks, listBankQuestion } = storeToRefs(
       useQuestionBankStore()
     );
     type RangeValue = [Dayjs, Dayjs];
@@ -272,13 +273,13 @@ export default defineComponent({
       userFilter,
       bankFilter,
       users,
-      currentbankName,
       currentBankAction,
       openDeleteBankModal,
       openDuplicateBankModal,
       duplicateBanks,
       removeBanks,
       convertDate,
+      updateBankName,
     };
   },
 });
