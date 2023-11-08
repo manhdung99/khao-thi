@@ -93,11 +93,21 @@
               <span class="text-sm">Trắc nghiệm & tự luận</span>
             </div>
             <div class="flex items-center mt-2 ml-4">
-              <input class="w-4 h-4" type="checkbox" />
+              <input
+                @click="showOnlyEssay = false"
+                v-model="showOnlyTheory"
+                class="w-4 h-4"
+                type="checkbox"
+              />
               <span class="text-sm ml-2">Trắc nghiệm</span>
             </div>
             <div class="flex items-center mt-2 ml-4">
-              <input class="w-4 h-4" type="checkbox" />
+              <input
+                @click="showOnlyTheory = false"
+                v-model="showOnlyEssay"
+                class="w-4 h-4"
+                type="checkbox"
+              />
               <span class="text-sm ml-2">Tự luận</span>
             </div>
           </div>
@@ -246,6 +256,8 @@ export default defineComponent({
     const pageSizeOptions = [5, 10, 20, 50];
     const pageLength = ref(0);
     const continuousIndex = ref(0);
+    const showOnlyTheory = ref(false);
+    const showOnlyEssay = ref(false);
     const filterArray = ref();
     const filterKey = ref("");
     const currentbankName = ref("");
@@ -292,6 +304,12 @@ export default defineComponent({
     const hardQuestions = computed(() =>
       currentBankQuestions.value.filter((question) => question.LevelPart === 4)
     );
+    const theoryQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.Type != "ESSAY")
+    );
+    const essayQuestions = computed(() =>
+      currentBankQuestions.value.filter((question) => question.Type == "ESSAY")
+    );
     const getQuestionsByType = (questions: PartQuestion[], type: string) => {
       return questions.filter((question) => question.Type === type);
     };
@@ -312,6 +330,7 @@ export default defineComponent({
         currentbankName.value = bankName;
       }
     });
+    // Caculator Data when change current page
     const caculatorData = (currentPage: number) => {
       if (currentPage * pageSize.value > currentBankQuestions.value.length) {
         currentBankQuestionFilter.value = currentBankQuestionFilter.value.slice(
@@ -335,13 +354,28 @@ export default defineComponent({
       currentBankQuestions.value = data;
     };
     //Change bank
-    watch([currentBankQuestions, currentPage], async () => {
-      currentBankQuestionFilter.value = currentBankQuestions.value;
-      pageLength.value = currentBankQuestionFilter.value.length;
-      caculatorData(currentPage.value);
-      await createListAnswerQuiz2();
-      await handleContentChange();
-    });
+    watch(
+      [currentBankQuestions, currentPage, showOnlyEssay, showOnlyTheory],
+      async () => {
+        if (showOnlyEssay.value || showOnlyTheory.value) {
+          if (showOnlyEssay.value) {
+            currentBankQuestionFilter.value = essayQuestions.value;
+          } else {
+            currentBankQuestionFilter.value = theoryQuestions.value;
+          }
+        } else {
+          currentBankQuestionFilter.value = currentBankQuestions.value;
+        }
+        pageLength.value = currentBankQuestionFilter.value.length;
+        if (currentBankQuestionFilter.value.length <= pageSize.value) {
+          caculatorData(1);
+        } else {
+          caculatorData(currentPage.value);
+        }
+        await createListAnswerQuiz2();
+        await handleContentChange();
+      }
+    );
     watch(currentBankQuestions, () => {
       filterArray.value = [
         {
@@ -485,7 +519,6 @@ export default defineComponent({
         (filterQuestion: any) => filterQuestion.levelQuestions.length > 0
       );
     });
-
     return {
       openAddNewQuestionHandmadeModal,
       openSelectQuestionFromCourse,
@@ -513,6 +546,8 @@ export default defineComponent({
       filterArray,
       continuousIndex,
       filterKey,
+      showOnlyEssay,
+      showOnlyTheory,
       validateQuestion,
       handlePageSizeChange,
       updateAddNewBankModalStatus,
