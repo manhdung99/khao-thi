@@ -45,11 +45,12 @@
       v-show="!showDetail"
       class="p-4 text-sm text-gray-600 flex justify-between"
     >
-      <span v-if="question.Title || question.Description">
+      <span class="max-w-4/5" v-if="question.Title || question.Description">
         <span v-if="question.Title" v-html="question.Title"></span>
         <span class="ellipsis" v-else v-html="question.Description"></span>
       </span>
-      <span v-else v-html="question.Questions[0].Content"> </span>
+      <span class="max-w-4/5" v-else v-html="question.Questions[0].Content">
+      </span>
       <div class="flex">
         <span
           @click="showDetail = true"

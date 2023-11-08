@@ -1,6 +1,7 @@
 <template>
   <div class="modal">
     <div
+      v-if="!openListSelected"
       class="bg-white rounded-sm select-question-from-bank max-h-screen w-full relative"
     >
       <div class="select-bank-modal-content">
@@ -9,7 +10,9 @@
         >
           <div class="flex w-full justify-between mr-6 items-center">
             <span>Chọn từ ngân hàng</span>
-            <span class="text-sm font-semibold"
+            <span
+              @click="openListSelected = true"
+              class="text-sm font-semibold cursor-pointer hover:underline"
               >Đã chọn {{ currentQuestionPartSelected.length }} câu</span
             >
           </div>
@@ -107,6 +110,66 @@
         </button>
       </div>
     </div>
+    <div
+      v-else
+      class="bg-white rounded-sm select-question-from-bank max-h-screen w-full relative"
+    >
+      <div class="select-bank-modal-content-part2">
+        <div
+          class="flex items-center justify-between text-indigo text-lg border-b p-4"
+        >
+          <div class="flex w-full justify-between mr-6 items-center">
+            <span>Câu hỏi đã chọn </span>
+            <div class="flex items-center">
+              <button
+                @click="validatelistSelectedQuestion"
+                class="btn btn-primary text-sm mr-4"
+              >
+                Kiểm tra lỗi
+              </button>
+              <span class="text-sm font-semibold"
+                >Tổng số câu :
+                {{ currentQuestionPartSelected.length }} câu</span
+              >
+            </div>
+          </div>
+          <span @click="openListSelected = false" class="cursor-pointer"
+            ><img :src="closeIcon" alt=""
+          /></span>
+        </div>
+        <div class="list-question-selected scroll">
+          <!-- Câu hỏi của ngân hàng  -->
+          <div class="flex-1">
+            <div class="text-indigo text-sm font-semibold" v-if="isLoading">
+              Đang tải dữ liệu ...
+            </div>
+            <div class="h-full" v-else>
+              <div
+                class="list-question-part scroll h-full"
+                v-if="currentQuestionPartSelected.length > 0"
+              >
+                <div
+                  v-for="(question, index) in currentQuestionPartSelected"
+                  :key="question.ID"
+                  class="flex items-center w-full"
+                >
+                  <selectedQuestionBankPart2
+                    :questionPart="question"
+                    :index="index"
+                    :answerListQuiz2="answerListQuiz2"
+                    class="border flex-1"
+                    :removeQuestionInListSelected="removeQuestionInListSelected"
+                  />
+                </div>
+              </div>
+              <div class="text-indigo text-sm font-semibold ml-2" v-else>
+                Không có dữ liệu
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -118,16 +181,19 @@ import { usePopupStore } from "@/stores/popup";
 import { useSelectQuestionFromBank } from "@/stores/question-select-from-bank";
 import { storeToRefs } from "pinia";
 import selectedQuestionBank from "../question/selectedQuestionBank/questionSelectedBank.vue";
+import selectedQuestionBankPart2 from "../question/selectedQuestionBank/questionSelectedBankPart2.vue";
 import Bank from "../type/bank";
 import PartQuestion from "../type/partQuestion";
 import { useQuestionBankStore } from "@/stores/question-bank-store";
 import { addStaticLink } from "../../uses/addStaticLink";
 import Answer from "../type/answer";
 import Question from "../type/question";
+import { validateQuestion } from "../../uses/function";
 export default defineComponent({
   name: "SelectQuestionBank",
   components: {
     selectedQuestionBank,
+    selectedQuestionBankPart2,
   },
   setup() {
     const isLoading = ref(false);
@@ -136,6 +202,7 @@ export default defineComponent({
     const { bankList } = storeToRefs(useSelectQuestionFromBank());
     const { addQuestionToCurrentList } = useQuestionBankStore();
     const answerListQuiz2 = ref<Answer[]>([]);
+    const openListSelected = ref(false);
     const toggleTag = (obj: Bank) => {
       const id = obj.ID;
       if (obj.Tags == null) {
@@ -189,6 +256,12 @@ export default defineComponent({
           (question) => question.ID as string
         );
     };
+    const removeQuestionInListSelected = (id: string) => {
+      currentQuestionPartSelected.value =
+        currentQuestionPartSelected.value.filter(
+          (question) => question.ID != id
+        );
+    };
     const createListAnswerQuiz2 = () => {
       currentListPartQuestion.value.forEach((part) => {
         if (part.Type == "QUIZ2") {
@@ -202,6 +275,10 @@ export default defineComponent({
         }
       });
     };
+    const validatelistSelectedQuestion = async () => {
+      const data = await validateQuestion(currentQuestionPartSelected.value);
+      currentQuestionPartSelected.value = data;
+    };
     onMounted(() => {
       getBanks();
     });
@@ -214,12 +291,15 @@ export default defineComponent({
       currentQuestionPartSelected,
       currentSelectedPartQuestionsID,
       answerListQuiz2,
+      openListSelected,
       updateSelectQuestionFromBankStatus,
       getTagQuiz,
       toggleTag,
       getListPartByTag,
       updateListSelectedQuestion,
       saveData,
+      removeQuestionInListSelected,
+      validatelistSelectedQuestion,
     };
   },
 });
@@ -246,6 +326,9 @@ export default defineComponent({
   max-height: calc(100vh - 80px);
   overflow: hidden;
 }
+.select-bank-modal-content-part2 {
+  max-height: 100vh;
+}
 .select-question-from-bank .main-content {
   height: calc(100vh - 118px);
   padding: 16px;
@@ -253,5 +336,9 @@ export default defineComponent({
 }
 .select-question-from-bank .list-question-part {
   padding: 0 8px;
+}
+.list-question-selected {
+  height: calc(100vh - 62px);
+  padding: 16px;
 }
 </style>

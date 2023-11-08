@@ -93,6 +93,13 @@ export async function validateQuestion(partQuestions: PartQuestion[]) {
       return 1;
     }
   });
-  alert("Đã kiểm tra lỗi xong");
+  const numberErrorQuestions = partQuestions.filter(
+    (question) => question.validateError == true
+  );
+  if (numberErrorQuestions.length > 0) {
+    alert(`Có ${numberErrorQuestions.length} câu hỏi lỗi`);
+  } else {
+    alert("Không có câu hỏi lỗi");
+  }
   return partQuestions;
 }

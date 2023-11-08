@@ -89,9 +89,8 @@
               <input class="w-4 h-4" type="checkbox" />
               <span class="text-sm ml-2">Hiển thị chi tiết câu hỏi</span>
             </div>
-            <div class="flex items-center mt-2">
-              <input class="w-4 h-4" type="checkbox" />
-              <span class="text-sm ml-2">Trắc nghiệm & tự luận</span>
+            <div class="flex items-center mt-2 font-semibold">
+              <span class="text-sm">Trắc nghiệm & tự luận</span>
             </div>
             <div class="flex items-center mt-2 ml-4">
               <input class="w-4 h-4" type="checkbox" />

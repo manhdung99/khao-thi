@@ -24,15 +24,13 @@
             ? "Điền từ"
             : question.Type == "QUIZ3"
             ? "Matching"
-            : question.Type == "QUIZ4"
-            ? "Chọn nhiều"
-            : "Tự luận"
+            : "Chọn nhiều"
         }}</span
       >
     </div>
     <!-- Default  -->
     <div
-      v-if="!showDetail"
+      v-show="!showDetail"
       class="p-4 text-sm text-gray-600 flex justify-between"
     >
       <span class="max-w-4/5" v-if="question.Title || question.Description">
@@ -49,29 +47,15 @@
           <img :src="eyeIcon" alt="" />
         </span>
         <span
-          @click="
-            questionDuplicateID = question.ID;
-            questionDuplicateIndex = index as number;
-            updateDuplicateQuestionModalStatus(true, 'mainQuestion');
-          "
-          class="mr-2 cursor-pointer flex items-end"
-        >
-          <img :src="duplicateIcon" alt="" />
-        </span>
-        <span
-          @click="
-            questionDeleteID = question.ID;
-            questionDeleteIndex = index as number;
-            updateDeleteQuestionModalStatus(true, 'mainQuestion');
-          "
-          class="mr-2 cursor-pointer flex items-end"
+          @click="removeQuestionInListSelected(question.ID)"
+          class="mr-2 cursor-pointer"
         >
           <img :src="removeIcon" alt="" />
         </span>
       </div>
     </div>
     <!-- Detail  -->
-    <div v-else class="p-4 pt-8 text-gray-600 text-sm relative">
+    <div v-show="showDetail" class="p-4 pt-8 text-gray-600 text-sm relative">
       <span class="absolute right-2 cursor-pointer top-1"
         ><img @click="showDetail = false" class="w-8 h-8" :src="iconTop" alt=""
       /></span>
@@ -102,21 +86,7 @@
       <div class="flex justify-end mt-2">
         <div class="flex">
           <span
-            @click="
-              questionDuplicateID = question.ID;
-              questionDuplicateIndex = index as number;
-              updateDuplicateQuestionModalStatus(true, 'selectedQuestion');
-            "
-            class="mr-2 cursor-pointer"
-          >
-            <img :src="duplicateIcon" alt="" />
-          </span>
-          <span
-            @click="
-              questionDeleteID = question.ID;
-              questionDeleteIndex = index as number;
-              updateDeleteQuestionModalStatus(true, 'selectedQuestion');
-            "
+            @click="removeQuestionInListSelected(question.ID)"
             class="mr-2 cursor-pointer"
           >
             <img :src="removeIcon" alt="" />
@@ -127,7 +97,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { usePopupStore } from "../../../stores/popup";
 import { useQuestionBankStore } from "../../../stores/question-bank-store";
 import editIcon from "../../../assets/image/edit.svg";
@@ -137,8 +107,9 @@ import removeIcon from "../../../assets/image/removeIcon.svg";
 import iconTop from "../../../assets/image/top-arrow.svg";
 import { storeToRefs } from "pinia";
 import PartQuestion from "../../type/partQuestion";
+import Answer from "@/components/type/answer";
 export default defineComponent({
-  name: "QuestionSelectedVue",
+  name: "questionSelectedBankPart2",
   props: {
     index: {
       type: Number,
@@ -148,24 +119,26 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    answerListQuiz2: {
+      type: Array,
+      required: true,
+    },
+    removeQuestionInListSelected: {
+      type: Function,
+      required: true,
+    },
   },
   setup(props) {
-    const {
-      updateAddNewBankModalStatus,
-      updateDeleteQuestionModalStatus,
-      updateDuplicateQuestionModalStatus,
-    } = usePopupStore();
+    const { updateAddNewBankModalStatus, updateDeleteQuestionModalStatus } =
+      usePopupStore();
     const { deleteQuestion } = useQuestionBankStore();
 
     // Remove the initialization of question with props.questionPart
     const question = ref<PartQuestion>();
 
-    const {
-      questionDeleteID,
-      questionDuplicateID,
-      questionDuplicateIndex,
-      questionDeleteIndex,
-    } = storeToRefs(useQuestionBankStore());
+    const { questionDeleteID, questionDeleteIndex } = storeToRefs(
+      useQuestionBankStore()
+    );
     const { updateQuestionInQuestionList } = useQuestionBankStore();
 
     const resetData = () => {
@@ -177,7 +150,24 @@ export default defineComponent({
       // Set the question ref to a deep copy of props.questionPart
       question.value = JSON.parse(JSON.stringify(props.questionPart));
     });
-
+    onMounted(() => {
+      nextTick(() => {
+        if (question.value && question.value.Type == "QUIZ2") {
+          setDefaultProperty();
+        }
+      });
+    });
+    const setDefaultProperty = () => {
+      const elements = document.querySelectorAll(
+        ".select-bank-modal-content .fillquiz"
+      );
+      for (let i = 0; i < elements.length; i++) {
+        const element = elements[i] as HTMLInputElement;
+        console.log(element);
+        const answers = props.answerListQuiz2 as Answer[];
+        element.placeholder = answers[i].Content;
+      }
+    };
     const showDetail = ref(false);
 
     return {
@@ -187,14 +177,11 @@ export default defineComponent({
       showDetail,
       eyeIcon,
       iconTop,
-      questionDuplicateID,
-      questionDuplicateIndex,
       questionDeleteIndex,
       questionDeleteID,
       question,
       updateAddNewBankModalStatus,
       updateDeleteQuestionModalStatus,
-      updateDuplicateQuestionModalStatus,
       deleteQuestion,
       updateQuestionInQuestionList,
       resetData,
