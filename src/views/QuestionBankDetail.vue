@@ -47,6 +47,7 @@
               :index="index"
               :canEdit="true"
               :answerListQuiz2="answerListQuiz2"
+              :showAll="showAll"
             />
           </div>
           <div
@@ -86,7 +87,11 @@
           <div class="mt-6">
             <p class="font-bold border-b border-black pb-2">Tuỳ chọn</p>
             <div class="flex items-center">
-              <input class="w-4 h-4" type="checkbox" />
+              <input
+                v-model="showAll"
+                class="w-4 h-4 cursor-pointer"
+                type="checkbox"
+              />
               <span class="text-sm ml-2">Hiển thị chi tiết câu hỏi</span>
             </div>
             <div class="flex items-center mt-2 font-semibold">
@@ -96,7 +101,7 @@
               <input
                 @click="showOnlyEssay = false"
                 v-model="showOnlyTheory"
-                class="w-4 h-4"
+                class="w-4 h-4 cursor-pointer"
                 type="checkbox"
               />
               <span class="text-sm ml-2">Trắc nghiệm</span>
@@ -105,7 +110,7 @@
               <input
                 @click="showOnlyTheory = false"
                 v-model="showOnlyEssay"
-                class="w-4 h-4"
+                class="w-4 h-4 cursor-pointer"
                 type="checkbox"
               />
               <span class="text-sm ml-2">Tự luận</span>
@@ -251,6 +256,7 @@ export default defineComponent({
     const route = useRoute();
     const answerListQuiz2 = ref<Answer[]>([]);
     const DesIndex = ref(0);
+    const showAll = ref(false);
     const currentPage = ref(1);
     const pageSize = ref(5);
     const pageSizeOptions = [5, 10, 20, 50];
@@ -548,6 +554,7 @@ export default defineComponent({
       filterKey,
       showOnlyEssay,
       showOnlyTheory,
+      showAll,
       validateQuestion,
       handlePageSizeChange,
       updateAddNewBankModalStatus,

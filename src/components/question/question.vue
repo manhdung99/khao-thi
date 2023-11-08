@@ -42,7 +42,7 @@
     </div>
     <!-- Default  -->
     <div
-      v-show="!showDetail"
+      v-show="!showDetail || !showAll"
       class="p-4 text-sm text-gray-600 flex justify-between"
     >
       <span class="max-w-4/5" v-if="question.Title || question.Description">
@@ -81,7 +81,10 @@
       </div>
     </div>
     <!-- Detail  -->
-    <div v-show="showDetail" class="p-4 pt-8 text-gray-600 text-sm relative">
+    <div
+      v-show="showDetail || showAll"
+      class="p-4 pt-8 text-gray-600 text-sm relative"
+    >
       <span class="absolute right-2 cursor-pointer top-1"
         ><img
           @click="
@@ -230,6 +233,10 @@ export default defineComponent({
     },
     answerListQuiz2: {
       type: Array,
+      required: true,
+    },
+    showAll: {
+      type: Boolean,
       required: true,
     },
   },
